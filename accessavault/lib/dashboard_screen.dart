@@ -66,36 +66,49 @@ class DashboardScreen extends StatelessWidget {
           Expanded(
             child: Container(
               color: Color(0xFFF7F9FB),
-              padding: EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+              padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Dashboard',
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    // Statistic Cards
+                    SizedBox(height: 4),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        _StatCard(title: 'TOTAL USERS', value: '152'),
-                        SizedBox(width: 32),
-                        _StatCard(title: 'ACTIVE USERS', value: '124'),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _StatCard(title: 'ROLES', value: '8'),
-                        SizedBox(width: 32),
-                        _StatCard(title: 'GROUPS', value: '5'),
+                        Text(
+                          'Dashboard',
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0B2447),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        // Statistic Cards
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            _StatCard(title: 'TOTAL USERS', value: '152'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'ACTIVE USERS', value: '124'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'NEW SIGNUPS', value: '12'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'SUSPENDED USERS', value: '3'),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            _StatCard(title: 'ROLES', value: '8'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'GROUPS', value: '5'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'PENDING INVITES', value: '4'),
+                            SizedBox(width: 32),
+                            _StatCard(title: 'NOTIFICATIONS', value: '27'),
+                          ],
+                        ),
                       ],
                     ),
                   ],

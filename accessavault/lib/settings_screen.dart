@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:accessavault/general_settings_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
-      body: Center(child: Text('Settings Screen Content')),
+      backgroundColor: const Color(0xFFF7F9FB),
+      body: GeneralSettingsScreen(),
     );
   }
 }

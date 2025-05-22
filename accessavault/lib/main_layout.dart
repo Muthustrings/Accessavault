@@ -96,6 +96,35 @@ class _MainLayoutState extends State<MainLayout> {
                   onTap: () => _onItemTapped(4),
                 ),
                 Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 32.0,
+                    left: 16.0,
+                    right: 16.0,
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      // TODO: Implement logout logic
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.logout, color: Color(0xFF0B2447), size: 24),
+                        SizedBox(width: 16),
+                        Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0B2447),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -695,7 +724,7 @@ class SettingsScreenContent extends StatelessWidget {
             },
           ),
           Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-          _SettingsTile(title: 'Billing', onTap: () {}),
+          // Removed: _SettingsTile(title: 'Billing', onTap: () {}),
         ],
       ),
     );
