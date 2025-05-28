@@ -1,0 +1,6 @@
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'your_mysql_password', // <-- set your actual password here
+  database: 'accessavault_db'
+});

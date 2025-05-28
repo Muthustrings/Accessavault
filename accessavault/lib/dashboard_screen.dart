@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:accessavault/users_screen.dart';
+import 'package:accessavault/users_screen.dart' as user_screen;
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -51,7 +51,9 @@ class DashboardScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UsersScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => user_screen.UsersScreen(),
+                      ),
                     );
                   },
                 ),
