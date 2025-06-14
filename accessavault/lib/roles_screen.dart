@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:accessavault/lib/role_detail_screen.dart';
+import 'package:accessavault/role_detail_screen.dart';
 
 class RolesScreen extends StatefulWidget {
   const RolesScreen({Key? key}) : super(key: key);
 
   @override
-  _RolesScreenState createState() => _RolesScreenState();
+  RolesScreenState createState() => RolesScreenState();
 }
 
-class _RolesScreenState extends State<RolesScreen> {
+class RolesScreenState extends State<RolesScreen> {
   // Placeholder data for roles
   final List<Map<String, String>> _roles = [
     {'name': 'Admin', 'description': 'Full access to all features'},
@@ -25,7 +25,7 @@ class _RolesScreenState extends State<RolesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Roles')),
+      appBar: AppBar(title: const Text('Roles')),
       body: ListView.builder(
         itemCount: _roles.length,
         itemBuilder: (context, index) {
@@ -37,7 +37,7 @@ class _RolesScreenState extends State<RolesScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -50,7 +50,7 @@ class _RolesScreenState extends State<RolesScreen> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () {
                     _deleteRole(index);
                   },

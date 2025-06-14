@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:accessavault/users_screen.dart' as user_screen;
 
 class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

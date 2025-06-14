@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddRoleScreen extends StatefulWidget {
-  const AddRoleScreen({Key? key}) : super(key: key);
+  const AddRoleScreen({super.key});
 
   @override
   _AddRoleScreenState createState() => _AddRoleScreenState();

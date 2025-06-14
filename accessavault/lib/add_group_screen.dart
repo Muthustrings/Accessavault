@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddGroupScreen extends StatefulWidget {
-  const AddGroupScreen({Key? key}) : super(key: key);
+  const AddGroupScreen({super.key});
 
   @override
   _AddGroupScreenState createState() => _AddGroupScreenState();

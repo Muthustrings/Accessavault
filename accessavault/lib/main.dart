@@ -6,16 +6,22 @@ import 'dart:convert';
 
 class UserProvider extends ChangeNotifier {
   List<Map<String, String>> _users = [];
+  bool _initialized = false;
 
-  UserProvider() {
-    _loadUsers();
+  Future<void> initialize() async {
+    if (!_initialized) {
+      await loadUsers();
+      _initialized = true;
+    }
   }
 
   List<Map<String, String>> get users => List.unmodifiable(_users);
 
   Future<void> addUser(Map<String, String> user) async {
-    _users.add(user);
+    _users.add(Map<String, String>.from(user));
     await _saveUsers();
+    print('User added: $user'); // Debugging log
+    print('Current users after addition: $_users'); // Debugging log
     notifyListeners();
   }
 
@@ -25,34 +31,59 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadUsers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final usersJson = prefs.getString('users');
-    if (usersJson != null) {
-      final List<dynamic> decodedList = jsonDecode(usersJson);
-      _users = decodedList.cast<Map<String, String>>().toList();
+  Future<void> loadUsers() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final usersJson = prefs.getString('users');
+      print(
+        'Raw users JSON from SharedPreferences: $usersJson',
+      ); // Debugging log
+      if (usersJson != null) {
+        final List<dynamic> decodedList = jsonDecode(usersJson);
+        _users =
+            decodedList.map<Map<String, String>>((item) {
+              return Map<String, String>.from(item);
+            }).toList();
+        print('Users loaded into _users: $_users'); // Debugging log
+      } else {
+        print('No users found in SharedPreferences'); // Debugging log
+        _users = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error loading users: $e');
+      _users = [];
       notifyListeners();
     }
   }
 
   Future<void> _saveUsers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final usersJson = jsonEncode(_users);
-    await prefs.setString('users', usersJson);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final usersJson = jsonEncode(_users);
+      await prefs.setString('users', usersJson);
+      print('Users saved to SharedPreferences: $usersJson'); // Debugging log
+    } catch (e) {
+      print('Error saving users: $e');
+    }
   }
 }
 
 final RouteObserver<PageRoute> routeObserver =
     RouteObserver<PageRoute>(); // Define as global final
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final userProvider = UserProvider();
+  await userProvider.initialize();
+
   runApp(
-    ChangeNotifierProvider(create: (_) => UserProvider(), child: const MyApp()),
+    ChangeNotifierProvider(create: (_) => userProvider, child: const MyApp()),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

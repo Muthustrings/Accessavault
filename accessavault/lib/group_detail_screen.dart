@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class GroupDetailScreen extends StatelessWidget {
   final String groupName;
 
-  const GroupDetailScreen({Key? key, required this.groupName})
-    : super(key: key);
+  const GroupDetailScreen({super.key, required this.groupName});
 
   @override
   Widget build(BuildContext context) {

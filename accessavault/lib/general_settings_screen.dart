@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GeneralSettingsScreen extends StatefulWidget {
+  const GeneralSettingsScreen({super.key});
+
   @override
   _GeneralSettingsScreenState createState() => _GeneralSettingsScreenState();
 }
@@ -107,8 +109,9 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
                                 )
                                 .toList(),
                         onChanged: (val) {
-                          if (val != null)
+                          if (val != null) {
                             setState(() => _selectedLanguage = val);
+                          }
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -139,8 +142,9 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
                                 )
                                 .toList(),
                         onChanged: (val) {
-                          if (val != null)
+                          if (val != null) {
                             setState(() => _selectedTimeZone = val);
+                          }
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(

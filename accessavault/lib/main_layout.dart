@@ -1,30 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:accessavault/settings_screen.dart';
 import 'package:accessavault/notifications_settings_screen.dart';
-import 'package:accessavault/add_role_screen.dart';
-import 'package:accessavault/add_group_screen.dart';
 import 'package:accessavault/users_screen.dart';
+import 'package:accessavault/groups_screen.dart';
 
 class MainLayout extends StatefulWidget {
+  const MainLayout({Key? key}) : super(key: key);
+
   @override
   _MainLayoutState createState() => _MainLayoutState();
 }
 
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0; // 0 for Dashboard, 1 for Users
-
-  final List<Widget> _screens = [
-    DashboardScreenContent(),
-    UsersScreen(),
-    RolesScreenContent(),
-    GroupsScreenContent(),
-    SettingsScreenContent(),
+  final List<Widget> _screens = [];
+  // Placeholder data for roles
+  final List<Map<String, String>> _roles = [
+    {'name': 'Admin', 'description': 'Full access to all features'},
+    {'name': 'Editor', 'description': 'Can create and edit content'},
+    {'name': 'Viewer', 'description': 'Can view content'},
   ];
+  @override
+  void initState() {
+    super.initState();
+    _screens.addAll([
+      DashboardScreenContent(),
+      UsersScreen(),
+      RolesScreenContent(onRoleAdded: _addRole, roles: _roles),
+      GroupsScreenContent(),
+      SettingsScreenContent(),
+    ]);
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _addRole(Map<String, String> newRole, List<String>? selectedUsers) {
+    if (mounted) {
+      setState(() {
+        _roles.add(newRole);
+      });
+    }
   }
 
   @override
@@ -138,6 +157,8 @@ class _MainLayoutState extends State<MainLayout> {
 
 // We will move the content of DashboardScreen and UsersScreen into these widgets
 class DashboardScreenContent extends StatelessWidget {
+  const DashboardScreenContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -181,359 +202,30 @@ class DashboardScreenContent extends StatelessWidget {
   }
 }
 
-class RolesScreenContent extends StatelessWidget {
+class RolesScreenContent extends StatefulWidget {
+  const RolesScreenContent({
+    Key? key,
+    required this.onRoleAdded,
+    required this.roles,
+  }) : super(key: key);
+
+  final Function(Map<String, String>, List<String>?) onRoleAdded;
+  final List<Map<String, String>> roles;
+
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFFF7F9FB),
-      padding: EdgeInsets.symmetric(horizontal: 48, vertical: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Roles',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0B2447),
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddRoleScreen()),
-                  );
-                },
-                icon: Icon(Icons.add, size: 22),
-                label: Text(
-                  'Add Role',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0B2447),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-                  elevation: 0,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 32),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-              child: DataTable(
-                headingRowHeight: 48,
-                dataRowHeight: 56,
-                columnSpacing: 32,
-                horizontalMargin: 0,
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Description',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Users',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                ],
-                rows: [
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Administrator',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Full access to the system',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('3', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Manager',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Manage users and groups',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('7', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Editor',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Edit content',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('12', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Viewer',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'View content only',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('25', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  _RolesScreenContentState createState() => _RolesScreenContentState();
 }
 
-class GroupsScreenContent extends StatelessWidget {
+class _RolesScreenContentState extends State<RolesScreenContent> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFFF7F9FB),
-      padding: EdgeInsets.symmetric(horizontal: 48, vertical: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Groups',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0B2447),
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddGroupScreen()),
-                  );
-                },
-                icon: Icon(Icons.add, size: 22),
-                label: Text(
-                  'Add Group',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF0B2447),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-                  elevation: 0,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 32),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-              child: DataTable(
-                headingRowHeight: 48,
-                dataRowHeight: 56,
-                columnSpacing: 32,
-                horizontalMargin: 0,
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Description',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Users',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                  ),
-                ],
-                rows: [
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Group A',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Description for Group A',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('10', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(
-                        Text(
-                          'Group B',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          'Description for Group B',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ),
-                      DataCell(Text('5', style: TextStyle(fontSize: 16))),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return Container(); // Replace with actual content if needed
   }
 }
 
 class SettingsScreenContent extends StatelessWidget {
+  const SettingsScreenContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -595,60 +287,10 @@ class _SettingsTile extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
-                fontSize: 24,
-                color: Color(0xFF23395d),
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 24, color: Color(0xFF23395d)),
             ),
             Icon(Icons.chevron_right, color: Colors.grey[600], size: 32),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SidebarItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final VoidCallback? onTap;
-
-  const _SidebarItem({
-    required this.icon,
-    required this.label,
-    this.selected = false,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 6),
-      child: Material(
-        color: selected ? Colors.white.withOpacity(0.08) : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            child: Row(
-              children: [
-                Icon(icon, color: Colors.white, size: 22),
-                SizedBox(width: 18),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -700,6 +342,52 @@ class _StatCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SidebarItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  const _SidebarItem({
+    required this.icon,
+    required this.label,
+    this.selected = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6),
+      child: Material(
+        color: selected ? Colors.white.withOpacity(0.08) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            child: Row(
+              children: [
+                Icon(icon, color: Colors.white, size: 22),
+                SizedBox(width: 18),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
