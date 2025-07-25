@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AddGroupScreen extends StatefulWidget {
-  const AddGroupScreen({super.key});
+  final bool isEditMode;
+  const AddGroupScreen({super.key, this.isEditMode = false});
 
   @override
   _AddGroupScreenState createState() => _AddGroupScreenState();
@@ -10,8 +11,10 @@ class AddGroupScreen extends StatefulWidget {
 class _AddGroupScreenState extends State<AddGroupScreen> {
   final TextEditingController _groupNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String? _selectedDescription;
-  final List<String> _descriptionOptions = ['Option 1', 'Option 2', 'Option 3'];
+  String? _selectedRole;
+  String? _selectedUser;
+  final List<String> _roles = ['Admin', 'Editor', 'Viewer'];
+  final List<String> _users = ['User 1', 'User 2', 'User 3'];
 
   @override
   void dispose() {
@@ -23,90 +26,156 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Group')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Group Name',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          widget.isEditMode ? 'Edit Single Group' : 'Add Single Group',
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(height: 8.0),
-            TextField(
-              controller: _groupNameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Description',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            DropdownButtonFormField<String>(
-              value: _selectedDescription,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              hint: const Text('Select Description'),
-              items:
-                  _descriptionOptions.map((String option) {
-                    return DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedDescription = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            const Text(
-              'Another Field',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24.0),
-            ElevatedButton(
-              onPressed: () {
-                // Placeholder logic for adding a group
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Group "${_groupNameController.text}" added (placeholder)',
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTextField(
+                    label: 'Group Name',
+                    controller: _groupNameController,
                   ),
-                );
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    label: 'Description',
+                    controller: _descriptionController,
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDropdown(
+                    label: 'Assign Roles',
+                    value: _selectedRole,
+                    items: _roles,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRole = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDropdown(
+                    label: 'Add Users',
+                    value: _selectedUser,
+                    items: _users,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedUser = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Logic to create group
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0B2447),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: Text(
+                          widget.isEditMode ? 'Save Changes' : 'Create Group',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              child: const Text('Create', style: TextStyle(fontSize: 18.0)),
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    int maxLines = 1,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          value: value,
+          hint: Text('Select $label'),
+          items:
+              items.map((String item) {
+                return DropdownMenuItem<String>(value: item, child: Text(item));
+              }).toList(),
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        ),
+      ],
     );
   }
 }

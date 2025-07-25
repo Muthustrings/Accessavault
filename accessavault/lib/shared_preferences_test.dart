@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class SharedPreferencesTest extends StatelessWidget {
+  const SharedPreferencesTest({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

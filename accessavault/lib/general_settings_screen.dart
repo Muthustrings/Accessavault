@@ -34,173 +34,146 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F9FB),
-      body: Stack(
-        children: [
-          Positioned(
-            top: 40,
-            left: 16,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Color(0xFF0B2447), size: 32),
-              onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Back',
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'General Settings',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              child: Container(
-                width: 520,
-                padding: EdgeInsets.symmetric(horizontal: 36, vertical: 40),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 18,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'General',
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    _LabeledField(
-                      label: 'Company Name',
-                      child: TextField(
-                        controller: _companyNameController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _LabeledField(
+                    label: 'Company Name',
+                    child: TextField(
+                      controller: _companyNameController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    SizedBox(height: 24),
-                    _LabeledField(
-                      label: 'Language',
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedLanguage,
-                        items:
-                            _languages
-                                .map(
-                                  (lang) => DropdownMenuItem(
-                                    value: lang,
-                                    child: Text(
-                                      lang,
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _selectedLanguage = val);
-                          }
+                  ),
+                  const SizedBox(height: 16),
+                  _LabeledField(
+                    label: 'Language',
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedLanguage,
+                      items:
+                          _languages.map((String lang) {
+                            return DropdownMenuItem<String>(
+                              value: lang,
+                              child: Text(lang),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedLanguage = val);
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _LabeledField(
+                    label: 'Time Zone',
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedTimeZone,
+                      items:
+                          _timeZones.map((String tz) {
+                            return DropdownMenuItem<String>(
+                              value: tz,
+                              child: Text(tz),
+                            );
+                          }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _selectedTimeZone = val);
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _LabeledField(
+                    label: 'Date Format',
+                    child: TextField(
+                      controller: _dateFormatController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
                         },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
                           ),
                         ),
+                        child: const Text('Cancel'),
                       ),
-                    ),
-                    SizedBox(height: 24),
-                    _LabeledField(
-                      label: 'Time Zone',
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedTimeZone,
-                        items:
-                            _timeZones
-                                .map(
-                                  (tz) => DropdownMenuItem(
-                                    value: tz,
-                                    child: Text(
-                                      tz,
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _selectedTimeZone = val);
-                          }
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    _LabeledField(
-                      label: 'Date Format',
-                      child: TextField(
-                        controller: _dateFormatController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0B2447),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 44,
-                            vertical: 18,
-                          ),
-                        ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
                         onPressed: () {
                           // Save logic here
                         },
-                        child: Text('Save', style: TextStyle(fontSize: 20)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0B2447),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

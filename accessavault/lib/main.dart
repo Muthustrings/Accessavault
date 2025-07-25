@@ -31,6 +31,14 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateUser(int index, Map<String, String> user) async {
+    if (index >= 0 && index < _users.length) {
+      _users[index] = Map<String, String>.from(user);
+      await _saveUsers();
+      notifyListeners();
+    }
+  }
+
   Future<void> loadUsers() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -82,15 +90,44 @@ void main() async {
   );
 }
 
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (context) => MainLayout()));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Image.asset('asset/image/logo.png', width: 160, height: 160),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AccessaVault',
+      title: 'Accessavault',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MainLayout(),
+      home: const SplashScreen(),
       navigatorObservers: [routeObserver],
     );
   }

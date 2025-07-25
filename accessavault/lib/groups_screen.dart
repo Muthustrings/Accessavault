@@ -1,57 +1,82 @@
 import 'package:flutter/material.dart';
-import 'group_detail_screen.dart';
+import 'package:accessavault/add_group_screen.dart';
+import 'package:accessavault/multiple_groups_screen.dart';
+import 'single_group_screen.dart';
 
-class GroupsScreenContent extends StatelessWidget {
+class GroupsScreenContent extends StatefulWidget {
   const GroupsScreenContent({super.key});
 
   @override
+  State<GroupsScreenContent> createState() => _GroupsScreenContentState();
+}
+
+class _GroupsScreenContentState extends State<GroupsScreenContent> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Select Group Management Type',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF162032),
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 48),
-            Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+        double cardWidth = screenWidth < 600 ? 140 : 220;
+        double cardHeight = screenWidth < 600 ? 100 : 180;
+        double titleFontSize = screenWidth < 600 ? 18 : 28;
+        double labelFontSize = screenWidth < 600 ? 12 : 20;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _GroupTypeCard(
-                  icon: Icons.person_outline,
-                  label: 'Single Group',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                GroupDetailScreen(groupName: 'Example Group'),
-                      ),
-                    );
-                  },
+                Text(
+                  'Select Group Management Type',
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF162032),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                const SizedBox(width: 32),
-                _GroupTypeCard(
-                  icon: Icons.groups_outlined,
-                  label: 'Multiple Groups\n(Bulk)',
-                  onTap: () {
-                    // TODO: Navigate to multiple groups management
-                  },
+                SizedBox(height: screenWidth < 600 ? 24 : 48),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _GroupTypeCard(
+                      icon: Icons.person_outline,
+                      label: 'Single Group',
+                      width: cardWidth,
+                      height: cardHeight,
+                      labelFontSize: labelFontSize,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SingleGroupScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(width: screenWidth < 600 ? 12 : 32),
+                    _GroupTypeCard(
+                      icon: Icons.groups_outlined,
+                      label: 'Multiple Groups\n(Bulk)',
+                      width: cardWidth,
+                      height: cardHeight,
+                      labelFontSize: labelFontSize,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MultipleGroupsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -59,11 +84,17 @@ class GroupsScreenContent extends StatelessWidget {
 class _GroupTypeCard extends StatelessWidget {
   final IconData icon;
   final String label;
+  final double width;
+  final double height;
+  final double labelFontSize;
   final VoidCallback onTap;
 
   const _GroupTypeCard({
     required this.icon,
     required this.label,
+    required this.width,
+    required this.height,
+    required this.labelFontSize,
     required this.onTap,
   });
 
@@ -72,8 +103,8 @@ class _GroupTypeCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 220,
-        height: 180,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -93,8 +124,8 @@ class _GroupTypeCard extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 20,
+              style: TextStyle(
+                fontSize: labelFontSize,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF162032),
               ),

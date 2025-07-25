@@ -17,90 +17,93 @@ class _NotificationsSettingsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F9FB),
-      body: Stack(
-        children: [
-          Positioned(
-            top: 40,
-            left: 16,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Color(0xFF0B2447), size: 32),
-              onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Back',
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Notifications',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
-          ),
-          Center(
-            child: Container(
-              width: 480,
-              padding: EdgeInsets.symmetric(horizontal: 36, vertical: 40),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 18,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Notifications',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0B2447),
-                    ),
-                  ),
-                  SizedBox(height: 40),
                   _NotificationToggle(
                     label: 'Email Notifications',
                     value: emailNotifications,
                     onChanged:
                         (val) => setState(() => emailNotifications = val),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   _NotificationToggle(
                     label: 'SMS Notifications',
                     value: smsNotifications,
                     onChanged: (val) => setState(() => smsNotifications = val),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   _NotificationToggle(
                     label: 'Push Notifications',
                     value: pushNotifications,
                     onChanged: (val) => setState(() => pushNotifications = val),
                   ),
-                  SizedBox(height: 48),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0B2447),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 44,
-                          vertical: 18,
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Save logic here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0B2447),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          'Save Changes',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      onPressed: () {
-                        // Save logic here
-                      },
-                      child: Text('Save', style: TextStyle(fontSize: 20)),
-                    ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

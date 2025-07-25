@@ -1,26 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:accessavault/add_role_screen.dart';
-import 'package:accessavault/role_detail_screen.dart';
+import 'package:accessavault/add_group_screen.dart';
 
-class RolesScreen extends StatefulWidget {
-  const RolesScreen({super.key});
+class SingleGroupScreen extends StatefulWidget {
+  const SingleGroupScreen({super.key});
 
   @override
-  RolesScreenState createState() => RolesScreenState();
+  State<SingleGroupScreen> createState() => _SingleGroupScreenState();
 }
 
-class RolesScreenState extends State<RolesScreen> {
-  // Placeholder data for roles
-  final List<Map<String, String>> _roles = [
-    {'name': 'Admin', 'description': 'Full access to all features'},
-    {'name': 'Editor', 'description': 'Can create and edit content'},
-    {'name': 'Viewer', 'description': 'Can view content'},
+class _SingleGroupScreenState extends State<SingleGroupScreen> {
+  final List<Map<String, String>> _groups = [
+    {
+      'name': 'Marketing_Team_2025',
+      'description': 'Handles marketing campaigns',
+      'roles': 'Editor, Viewer',
+    },
+    {
+      'name': 'DevOps_Core',
+      'description': 'Manages CI/CD and server infrastructure',
+      'roles': 'Admin, Viewer',
+    },
+    {
+      'name': 'HR_Admins',
+      'description': 'HR onboarding and payroll processing',
+      'roles': 'Admin',
+    },
   ];
 
-  void _deleteRole(int index) {
+  void _deleteGroup(int index) {
     setState(() {
-      _roles.removeAt(index);
+      _groups.removeAt(index);
     });
+  }
+
+  Future<void> _showDeleteConfirmationDialog(int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Group'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to delete this group?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                _deleteGroup(index);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -28,16 +72,14 @@ class RolesScreenState extends State<RolesScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
-        title: const Text(
-          'Roles',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -46,14 +88,7 @@ class RolesScreenState extends State<RolesScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => AddRoleScreen(
-                          onRoleAdded: (newRole, users) {
-                            setState(() {
-                              _roles.add(newRole);
-                            });
-                          },
-                        ),
+                    builder: (context) => const AddGroupScreen(),
                   ),
                 );
               },
@@ -61,7 +96,7 @@ class RolesScreenState extends State<RolesScreen> {
                 backgroundColor: const Color(0xFF0B2447),
               ),
               child: const Text(
-                '+ Add Role',
+                '+ Add Group',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -73,6 +108,11 @@ class RolesScreenState extends State<RolesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              'Single Groups',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -84,7 +124,7 @@ class RolesScreenState extends State<RolesScreen> {
                   columns: const [
                     DataColumn(
                       label: Text(
-                        'Name',
+                        'Group Name',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -96,7 +136,7 @@ class RolesScreenState extends State<RolesScreen> {
                     ),
                     DataColumn(
                       label: Text(
-                        'Users',
+                        'Roles',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -108,14 +148,14 @@ class RolesScreenState extends State<RolesScreen> {
                     ),
                   ],
                   rows:
-                      _roles.asMap().entries.map((entry) {
+                      _groups.asMap().entries.map((entry) {
                         final index = entry.key;
-                        final role = entry.value;
+                        final group = entry.value;
                         return DataRow(
                           cells: [
-                            DataCell(Text(role['name']!)),
-                            DataCell(Text(role['description']!)),
-                            DataCell(const Text('0')), // Placeholder
+                            DataCell(Text(group['name']!)),
+                            DataCell(Text(group['description']!)),
+                            DataCell(Text(group['roles']!)),
                             DataCell(
                               Row(
                                 children: [
@@ -126,8 +166,8 @@ class RolesScreenState extends State<RolesScreen> {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (context) => RoleDetailScreen(
-                                                roleName: role['name']!,
+                                              (context) => const AddGroupScreen(
+                                                isEditMode: true,
                                               ),
                                         ),
                                       );
@@ -136,7 +176,7 @@ class RolesScreenState extends State<RolesScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.delete),
                                     onPressed: () {
-                                      _deleteRole(index);
+                                      _showDeleteConfirmationDialog(index);
                                     },
                                   ),
                                 ],

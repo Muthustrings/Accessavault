@@ -38,258 +38,157 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        final users = userProvider.users;
-        print('Users displayed in UsersScreen: $users'); // Debugging log
-
-        return SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 48, vertical: 40),
-            child: Column(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F5F5),
+        elevation: 0,
+        title: const Text(
+          'Users',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: ElevatedButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddUserPage()),
+                );
+                context.read<UserProvider>().loadUsers();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0B2447),
+              ),
+              child: const Text(
+                '+ Add User',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Consumer<UserProvider>(
+          builder: (context, userProvider, child) {
+            final users = userProvider.users;
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Row with Title and Add User Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Users',
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0B2447),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0B2447),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 18,
-                        ),
-                      ),
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddUserPage(),
-                          ),
-                        );
-                        // Reload users after returning from AddUserPage
-                        context.read<UserProvider>().loadUsers();
-                      },
-                      child: Text(
-                        'Add User',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 24),
-
-                // Search Field
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search users',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 0,
-                      horizontal: 8,
-                    ),
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-                SizedBox(height: 32),
-
-                // Table Headers
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 18,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          'Name',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Color(0xFF0B2447),
+                  child: Container(
+                    width: double.infinity,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(
+                          label: Text(
+                            'Name',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Role',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Color(0xFF0B2447),
+                        DataColumn(
+                          label: Text(
+                            'Role',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Status',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Color(0xFF0B2447),
+                        DataColumn(
+                          label: Text(
+                            'Status',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Actions',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Color(0xFF0B2447),
+                        DataColumn(
+                          label: Text(
+                            'Actions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // User List
-                ListView(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  children:
-                      users
-                          .map(
-                            (user) => Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      spreadRadius: 0,
-                                      blurRadius: 12,
-                                      offset: Offset(0, 4),
+                      ],
+                      rows:
+                          users.map((user) {
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(user['name'] ?? '')),
+                                DataCell(Text(user['role'] ?? '')),
+                                DataCell(
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
                                     ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 18,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          (user['status'] == 'Active')
+                                              ? Colors.green[100]
+                                              : Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      user['status'] ?? '',
+                                      style: TextStyle(
+                                        color:
+                                            (user['status'] == 'Active')
+                                                ? Colors.green[900]
+                                                : Colors.grey[700],
+                                      ),
+                                    ),
                                   ),
-                                  child: Row(
+                                ),
+                                DataCell(
+                                  Row(
                                     children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          user['name'] ?? '',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 17,
-                                          ),
-                                        ),
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        onPressed: () async {
+                                          final userIndex = users.indexOf(user);
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) => AddUserPage(
+                                                    user: user,
+                                                    userIndex: userIndex,
+                                                  ),
+                                            ),
+                                          );
+                                          context
+                                              .read<UserProvider>()
+                                              .loadUsers();
+                                        },
                                       ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          user['role'] ?? '',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 7,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                (user['status'] == 'Active')
-                                                    ? Colors.green[100]
-                                                    : Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(
-                                              18,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            user['status'] ?? '',
-                                            style: TextStyle(
-                                              color:
-                                                  (user['status'] == 'Active')
-                                                      ? Colors.green[900]
-                                                      : Colors.grey[700],
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.blue,
-                                              ),
-                                              onPressed: () {
-                                                // TODO: Implement edit functionality
-                                                print(
-                                                  'Edit user ${user['name']}',
-                                                );
-                                              },
-                                            ),
-                                            IconButton(
-                                              icon: Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed: () {
-                                                // Implement delete functionality
-                                                context
-                                                    .read<UserProvider>()
-                                                    .removeUser(user);
-                                              },
-                                            ),
-                                          ],
-                                        ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed: () {
+                                          context
+                                              .read<UserProvider>()
+                                              .removeUser(user);
+                                        },
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                              ],
+                            );
+                          }).toList(),
+                    ),
+                  ),
                 ),
               ],
-            ),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 }
