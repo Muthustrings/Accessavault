@@ -118,7 +118,7 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 child: DataTable(
                   columns: const [

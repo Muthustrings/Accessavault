@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:accessavault/settings_screen.dart';
-import 'package:accessavault/notifications_settings_screen.dart';
-import 'package:accessavault/users_screen.dart';
-import 'package:accessavault/groups_screen.dart';
-import 'package:accessavault/roles_screen.dart';
-import 'package:accessavault/dashboard_screen.dart';
-import 'package:accessavault/clients_screen.dart';
-import 'package:accessavault/apps_screen.dart';
+import 'settings_screen.dart';
+import 'notifications_settings_screen.dart';
+import 'users_screen.dart';
+import 'groups_screen.dart';
+import 'roles_screen.dart';
+import 'dashboard_screen.dart';
+import 'clients_screen.dart';
+import 'apps_screen.dart';
+import 'add_app_screen.dart'; // Import AddAppScreen
 
 class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+  const MainLayout({Key? key}) : super(key: key);
 
   @override
   _MainLayoutState createState() => _MainLayoutState();

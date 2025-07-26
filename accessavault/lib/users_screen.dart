@@ -86,7 +86,7 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Container(
+                  child: SizedBox(
                     width: double.infinity,
                     child: DataTable(
                       columns: const [
