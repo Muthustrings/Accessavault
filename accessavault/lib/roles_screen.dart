@@ -59,10 +59,17 @@ class RolesScreenState extends State<RolesScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0B2447),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: const Text(
                 '+ Add Role',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),
           ),

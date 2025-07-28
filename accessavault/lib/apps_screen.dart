@@ -88,12 +88,12 @@ class _AppsScreenState extends State<AppsScreen> {
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(
-                      6.0,
+                      4.0,
                     ), // Slightly more rounded corners
                   ),
                 ),
                 padding: MaterialStateProperty.all(
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 15.0),
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                 ),
               ),
               onPressed: () {
@@ -102,7 +102,7 @@ class _AppsScreenState extends State<AppsScreen> {
                   MaterialPageRoute(builder: (context) => const AddAppScreen()),
                 );
               },
-              child: const Text('+ Add App', style: TextStyle(fontSize: 18.0)),
+              child: const Text('+ Add App', style: TextStyle(fontSize: 20.0)),
             ),
           ),
         ],
@@ -118,6 +118,7 @@ class _AppsScreenState extends State<AppsScreen> {
                 DataColumn(label: Text('Linked Client')),
                 DataColumn(label: Text('App Type')),
                 DataColumn(label: Text('Status')),
+                DataColumn(label: Text('Actions')),
               ],
               rows:
                   _apps.map((app) {
@@ -154,6 +155,24 @@ class _AppsScreenState extends State<AppsScreen> {
                             ),
                           ),
                         ),
+                        DataCell(
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  _editApp(app);
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  _deleteApp(app);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     );
                   }).toList(),
@@ -162,5 +181,18 @@ class _AppsScreenState extends State<AppsScreen> {
         ),
       ),
     );
+  }
+
+  void _editApp(App app) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddAppScreen(app: app)),
+    );
+  }
+
+  void _deleteApp(App app) {
+    setState(() {
+      _apps.remove(app);
+    });
   }
 }

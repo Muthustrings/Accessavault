@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'apps_screen.dart';
 
 class AddAppScreen extends StatefulWidget {
-  const AddAppScreen({Key? key}) : super(key: key);
+  const AddAppScreen({Key? key, this.app}) : super(key: key);
+
+  final App? app;
 
   @override
   _AddAppScreenState createState() => _AddAppScreenState();
@@ -12,8 +15,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Add Application',
+        title: Text(
+          widget.app == null ? 'Add Application' : 'Edit Application',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
       ),
