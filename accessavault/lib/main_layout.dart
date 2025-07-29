@@ -17,7 +17,7 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  int _selectedIndex = 0; // 0 for Dashboard, 1 for Users
+  int _selectedIndex = 4; // 0 for Dashboard, 1 for Users, 4 for Clients
 
   final List<Widget> _screens = [];
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
-import 'clients_screen.dart'; // Import Client class
+import 'package:provider/provider.dart';
+import 'client_provider.dart'; // Import Client class and ClientProvider
 
 class AddClientScreen extends StatefulWidget {
   final Client? client; // Optional client for editing
@@ -68,8 +67,24 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
   void _saveClient() {
     if (_formKey.currentState!.validate()) {
-      // Here you would handle saving the client data
-      // For now, just show a snackbar
+      final clientProvider = Provider.of<ClientProvider>(
+        context,
+        listen: false,
+      );
+      final newClient = Client(
+        id: _clientIdController.text,
+        contactPerson: _contactPersonController.text,
+        email: _emailController.text,
+        website: _websiteController.text,
+        status: _statusValue,
+      );
+
+      if (widget.client != null) {
+        clientProvider.updateClient(widget.client!.id, newClient);
+      } else {
+        clientProvider.addClient(newClient);
+      }
+
       String action = widget.client == null ? 'Added' : 'Updated';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

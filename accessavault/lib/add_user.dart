@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
+import 'client_provider.dart'; // Import Client and ClientProvider
 
 class AddUserPage extends StatefulWidget {
   final Map<String, String>? user;
@@ -17,6 +18,7 @@ class _AddUserPageState extends State<AddUserPage> {
   late String _email;
   late String _role;
   late String _status;
+  Client? _selectedClient; // New variable for selected client
 
   final List<String> _roles = ['Admin', 'User', 'Guest'];
   final List<String> _statuses = ['Active', 'Inactive'];
@@ -28,6 +30,11 @@ class _AddUserPageState extends State<AddUserPage> {
     _email = widget.user?['email'] ?? '';
     _role = widget.user?['role'] ?? 'User';
     _status = widget.user?['status'] ?? 'Active';
+    // Initialize _selectedClient if editing an existing user and client info is available
+    // For simplicity, we'll assume client ID is stored in user map if applicable
+    // If not, you might need to fetch the client object based on an ID
+    // For now, we'll leave it null for new users or if no client is associated
+    _selectedClient = null; // Will be set from dropdown
   }
 
   @override
@@ -86,6 +93,22 @@ class _AddUserPageState extends State<AddUserPage> {
                       onSaved: (value) => _email = value ?? '',
                     ),
                     const SizedBox(height: 16),
+                    Consumer<ClientProvider>(
+                      builder: (context, clientProvider, child) {
+                        final clients = clientProvider.clients;
+                        return _buildClientDropdown(
+                          label: 'Client',
+                          value: _selectedClient,
+                          items: clients,
+                          onChanged: (Client? newClient) {
+                            setState(() {
+                              _selectedClient = newClient;
+                            });
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
                     _buildDropdown(
                       label: 'Role',
                       value: _role,
@@ -132,21 +155,22 @@ class _AddUserPageState extends State<AddUserPage> {
                                 context,
                                 listen: false,
                               );
+                              final userData = {
+                                'name': _name,
+                                'email': _email,
+                                'role': _role,
+                                'status': _status,
+                                'client_id':
+                                    _selectedClient?.id ?? '', // Add client ID
+                              };
                               if (widget.user != null &&
                                   widget.userIndex != null) {
-                                userProvider.updateUser(widget.userIndex!, {
-                                  'name': _name,
-                                  'email': _email,
-                                  'role': _role,
-                                  'status': _status,
-                                });
+                                userProvider.updateUser(
+                                  widget.userIndex!,
+                                  userData,
+                                );
                               } else {
-                                userProvider.addUser({
-                                  'name': _name,
-                                  'email': _email,
-                                  'role': _role,
-                                  'status': _status,
-                                });
+                                userProvider.addUser(userData);
                               }
                               Navigator.pop(context);
                             }
@@ -214,6 +238,35 @@ class _AddUserPageState extends State<AddUserPage> {
           items:
               items.map((String item) {
                 return DropdownMenuItem<String>(value: item, child: Text(item));
+              }).toList(),
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildClientDropdown({
+    required String label,
+    required Client? value,
+    required List<Client> items,
+    required ValueChanged<Client?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<Client>(
+          value: value,
+          items:
+              items.map((Client client) {
+                return DropdownMenuItem<Client>(
+                  value: client,
+                  child: Text(client.contactPerson), // Display contact person
+                );
               }).toList(),
           onChanged: onChanged,
           decoration: InputDecoration(

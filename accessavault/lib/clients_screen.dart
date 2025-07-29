@@ -1,21 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'add_client_screen.dart';
-
-class Client {
-  String id;
-  String contactPerson;
-  String email;
-  String website;
-  String status;
-
-  Client({
-    required this.id,
-    required this.contactPerson,
-    required this.email,
-    required this.website,
-    required this.status,
-  });
-}
+import 'client_provider.dart'; // Import the new ClientProvider
 
 class ClientsScreen extends StatefulWidget {
   const ClientsScreen({Key? key}) : super(key: key);
@@ -25,51 +11,15 @@ class ClientsScreen extends StatefulWidget {
 }
 
 class _ClientsScreenState extends State<ClientsScreen> {
-  final List<Client> _clients = [
-    Client(
-      id: 'CLIENT001',
-      contactPerson: 'John Smith',
-      email: 'john.smith@acme.com',
-      website: 'acme.com',
-      status: 'Active',
-    ),
-    Client(
-      id: 'CLIENT002',
-      contactPerson: 'Susan Johnson',
-      email: 's.johnson@globex.com',
-      website: 'globex.com',
-      status: 'Inactives',
-    ),
-    Client(
-      id: 'CLIENT003',
-      contactPerson: 'Tony Stark',
-      email: 't.stark.stark.com',
-      website: 'stark.com',
-      status: 'Active',
-    ),
-    Client(
-      id: 'CLIENT004',
-      contactPerson: 'Bruce Wayne',
-      email: 'bruce@wayne.com',
-      website: 'wayne.com',
-      status: 'Inactives',
-    ),
-  ];
-
   void _editClient(Client client) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddClientScreen(client: client)),
-    ).then((_) {
-      // Refresh the list after returning from AddClientScreen
-      setState(() {});
-    });
+    );
   }
 
-  void _deleteClient(Client client) {
-    setState(() {
-      _clients.removeWhere((c) => c.id == client.id);
-    });
+  void _deleteClient(Client client, ClientProvider clientProvider) {
+    clientProvider.deleteClient(client.id);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('Deleted ${client.id}')));
@@ -77,6 +27,9 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clientProvider = Provider.of<ClientProvider>(context);
+    final clients = clientProvider.clients;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -139,7 +92,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                 DataColumn(label: Text('Actions')), // New column for actions
               ],
               rows:
-                  _clients.map((client) {
+                  clients.map((client) {
                     return DataRow(
                       cells: [
                         DataCell(Text(client.id)),
@@ -156,7 +109,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
                               ),
                               IconButton(
                                 icon: const Icon(Icons.delete),
-                                onPressed: () => _deleteClient(client),
+                                onPressed:
+                                    () => _deleteClient(client, clientProvider),
                               ),
                             ],
                           ),

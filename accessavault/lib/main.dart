@@ -3,6 +3,7 @@ import 'package:accessavault/main_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:accessavault/client_provider.dart';
 
 class UserProvider extends ChangeNotifier {
   List<Map<String, String>> _users = [];
@@ -86,7 +87,13 @@ void main() async {
   await userProvider.initialize();
 
   runApp(
-    ChangeNotifierProvider(create: (_) => userProvider, child: const MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => userProvider),
+        ChangeNotifierProvider(create: (context) => ClientProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 
