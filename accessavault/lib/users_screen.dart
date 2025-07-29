@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:accessavault/main.dart';
 import 'package:accessavault/add_user.dart';
+import 'package:accessavault/client_provider.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -117,6 +118,12 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                         ),
                         DataColumn(
                           label: Text(
+                            'Client',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
                             'Actions',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -152,6 +159,26 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                                     ),
                                   ),
                                 ),
+                                DataCell(
+                                  Consumer<ClientProvider>(
+                                    builder: (context, clientProvider, child) {
+                                      final clientId = user['client_id'];
+                                      final client = clientProvider.clients
+                                          .firstWhere(
+                                            (c) => c.id == clientId,
+                                            orElse:
+                                                () => Client(
+                                                  id: '',
+                                                  contactPerson: 'N/A',
+                                                  email: '',
+                                                  website: '',
+                                                  status: '',
+                                                ),
+                                          );
+                                      return Text(client.contactPerson);
+                                    },
+                                  ),
+                                ), // Added Client column
                                 DataCell(
                                   Row(
                                     children: [
