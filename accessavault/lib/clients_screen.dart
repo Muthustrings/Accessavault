@@ -32,15 +32,28 @@ class _ClientsScreenState extends State<ClientsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Clients',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0, // Adjust as needed for "little bigger"
+        leadingWidth: 150.0, // Give enough space for the text
+        leading: const Padding(
+          padding: EdgeInsets.only(
+            left: 16.0,
+          ), // Add some padding from the edge
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Clients',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 28.0, // Increased font size
+                color:
+                    Colors
+                        .black, // Ensure text is visible against AppBar background
+              ),
+            ),
           ),
         ),
+        title: const Text(''), // Empty title as "Clients" is now in leading
         actions: [
-          const Spacer(), // Pushes the button to the left
+          // The Spacer() is no longer needed here as the leading widget handles the left alignment
           TextButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(
@@ -56,9 +69,9 @@ class _ClientsScreenState extends State<ClientsScreen> {
               ),
               padding: MaterialStateProperty.all(
                 const EdgeInsets.symmetric(
-                  horizontal: 30.0,
-                  vertical: 18.0,
-                ), // Increase padding for bigger size
+                  horizontal: 20.0,
+                  vertical: 12.0,
+                ), // Decrease padding for smaller size
               ),
             ),
             onPressed: () {
@@ -72,8 +85,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
             child: const Text(
               '+ Add Client',
               style: TextStyle(
-                fontSize: 20.0,
-              ), // Adjust text size for bigger button
+                fontSize: 16.0,
+              ), // Adjust text size for smaller button
             ),
           ),
         ],

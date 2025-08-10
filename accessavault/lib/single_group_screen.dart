@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:accessavault/add_group_screen.dart';
+import 'package:accessavault/group_provider.dart'; // Import GroupProvider
 
 class SingleGroupScreen extends StatefulWidget {
   const SingleGroupScreen({super.key});
@@ -9,31 +11,16 @@ class SingleGroupScreen extends StatefulWidget {
 }
 
 class _SingleGroupScreenState extends State<SingleGroupScreen> {
-  final List<Map<String, String>> _groups = [
-    {
-      'name': 'Marketing_Team_2025',
-      'description': 'Handles marketing campaigns',
-      'roles': 'Editor, Viewer',
-    },
-    {
-      'name': 'DevOps_Core',
-      'description': 'Manages CI/CD and server infrastructure',
-      'roles': 'Admin, Viewer',
-    },
-    {
-      'name': 'HR_Admins',
-      'description': 'HR onboarding and payroll processing',
-      'roles': 'Admin',
-    },
-  ];
-
-  void _deleteGroup(int index) {
-    setState(() {
-      _groups.removeAt(index);
+  @override
+  void initState() {
+    super.initState();
+    // Ensure groups are loaded when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GroupProvider>().loadGroups();
     });
   }
 
-  Future<void> _showDeleteConfirmationDialog(int index) async {
+  Future<void> _showDeleteConfirmationDialog(BuildContext context, GroupProvider groupProvider, Group group) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -56,8 +43,8 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
             ),
             TextButton(
               child: const Text('Yes'),
-              onPressed: () {
-                _deleteGroup(index);
+              onPressed: () async {
+                await groupProvider.deleteGroup(group.name);
                 Navigator.of(context).pop();
               },
             ),
@@ -69,6 +56,9 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final groupProvider = Provider.of<GroupProvider>(context);
+    final List<Group> groups = groupProvider.groups;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -136,7 +126,7 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
                     ),
                     DataColumn(
                       label: Text(
-                        'Roles',
+                        'Users', // Changed from Roles to Users as per Group model
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -148,20 +138,20 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
                     ),
                   ],
                   rows:
-                      _groups.asMap().entries.map((entry) {
-                        final index = entry.key;
+                      groups.asMap().entries.map((entry) {
                         final group = entry.value;
                         return DataRow(
                           cells: [
-                            DataCell(Text(group['name']!)),
-                            DataCell(Text(group['description']!)),
-                            DataCell(Text(group['roles']!)),
+                            DataCell(Text(group.name)),
+                            DataCell(Text(group.description)),
+                            DataCell(Text(group.users.join(', '))), // Display users
                             DataCell(
                               Row(
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.edit),
                                     onPressed: () {
+                                      // TODO: Implement edit functionality for groups
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -176,7 +166,7 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.delete),
                                     onPressed: () {
-                                      _showDeleteConfirmationDialog(index);
+                                      _showDeleteConfirmationDialog(context, groupProvider, group);
                                     },
                                   ),
                                 ],

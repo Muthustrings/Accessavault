@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:accessavault/group_provider.dart';
+import 'package:accessavault/role_provider.dart';
+import 'package:accessavault/main.dart'; // For UserProvider
+import 'package:accessavault/single_group_screen.dart'; // Navigate to this screen
 
 class AddGroupScreen extends StatefulWidget {
   final bool isEditMode;
@@ -13,8 +18,6 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   String? _selectedRole;
   String? _selectedUser;
-  final List<String> _roles = ['Admin', 'Editor', 'Viewer'];
-  final List<String> _users = ['User 1', 'User 2', 'User 3'];
 
   @override
   void dispose() {
@@ -25,6 +28,13 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    final roleProvider = Provider.of<RoleProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    final List<String> roles = roleProvider.roles.map((role) => role.name).toList();
+    final List<String> users = userProvider.users.map((user) => user['name'] ?? '').toList();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -69,7 +79,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                   _buildDropdown(
                     label: 'Assign Roles',
                     value: _selectedRole,
-                    items: _roles,
+                    items: roles,
                     onChanged: (value) {
                       setState(() {
                         _selectedRole = value;
@@ -80,7 +90,7 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                   _buildDropdown(
                     label: 'Add Users',
                     value: _selectedUser,
-                    items: _users,
+                    items: users,
                     onChanged: (value) {
                       setState(() {
                         _selectedUser = value;
@@ -105,8 +115,25 @@ class _AddGroupScreenState extends State<AddGroupScreen> {
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: () {
-                          // Logic to create group
+                        onPressed: () async {
+                          if (_groupNameController.text.isNotEmpty &&
+                              _descriptionController.text.isNotEmpty) {
+                            final newGroup = Group(
+                              name: _groupNameController.text,
+                              description: _descriptionController.text,
+                              users: _selectedUser != null ? [_selectedUser!] : [],
+                            );
+                            await groupProvider.addGroup(newGroup);
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (context) => const SingleGroupScreen()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill all required fields.'),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0B2447),

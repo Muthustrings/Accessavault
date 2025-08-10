@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:accessavault/add_role_screen.dart';
 import 'package:accessavault/role_detail_screen.dart';
+import 'package:accessavault/role_provider.dart'; // Import the new RoleProvider
 
 class RolesScreen extends StatefulWidget {
   const RolesScreen({super.key});
@@ -10,16 +12,12 @@ class RolesScreen extends StatefulWidget {
 }
 
 class RolesScreenState extends State<RolesScreen> {
-  // Placeholder data for roles
-  final List<Map<String, String>> _roles = [
-    {'name': 'Admin', 'description': 'Full access to all features'},
-    {'name': 'Editor', 'description': 'Can create and edit content'},
-    {'name': 'Viewer', 'description': 'Can view content'},
-  ];
-
-  void _deleteRole(int index) {
-    setState(() {
-      _roles.removeAt(index);
+  @override
+  void initState() {
+    super.initState();
+    // Load roles when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<RoleProvider>().loadRoles();
     });
   }
 
@@ -42,20 +40,24 @@ class RolesScreenState extends State<RolesScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => AddRoleScreen(
-                          onRoleAdded: (newRole, users) {
-                            setState(() {
-                              _roles.add(newRole);
-                            });
-                          },
-                        ),
+                    builder: (context) => AddRoleScreen(
+                      onRoleAdded: (newRole, users) {
+                        context.read<RoleProvider>().addRole(
+                              Role(
+                                name: newRole['name']!,
+                                description: newRole['description']!,
+                                users: users ?? [],
+                              ),
+                            );
+                      },
+                    ),
                   ),
                 );
+                context.read<RoleProvider>().loadRoles(); // Reload roles after adding
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0B2447),
@@ -77,52 +79,53 @@ class RolesScreenState extends State<RolesScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(
-                      label: Text(
-                        'Name',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Description',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Users',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'Actions',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                  rows:
-                      _roles.asMap().entries.map((entry) {
-                        final index = entry.key;
+        child: Consumer<RoleProvider>(
+          builder: (context, roleProvider, child) {
+            final roles = roleProvider.roles;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(
+                          label: Text(
+                            'Name',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Description',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Users',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Actions',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                      rows: roles.asMap().entries.map((entry) {
                         final role = entry.value;
                         return DataRow(
                           cells: [
-                            DataCell(Text(role['name']!)),
-                            DataCell(Text(role['description']!)),
-                            DataCell(const Text('0')), // Placeholder
+                            DataCell(Text(role.name)),
+                            DataCell(Text(role.description)),
+                            DataCell(Text(role.users.length.toString())),
                             DataCell(
                               Row(
                                 children: [
@@ -132,10 +135,9 @@ class RolesScreenState extends State<RolesScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder:
-                                              (context) => RoleDetailScreen(
-                                                roleName: role['name']!,
-                                              ),
+                                          builder: (context) => RoleDetailScreen(
+                                            roleName: role.name,
+                                          ),
                                         ),
                                       );
                                     },
@@ -143,7 +145,7 @@ class RolesScreenState extends State<RolesScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.delete),
                                     onPressed: () {
-                                      _deleteRole(index);
+                                      context.read<RoleProvider>().deleteRole(role.name);
                                     },
                                   ),
                                 ],
@@ -152,10 +154,12 @@ class RolesScreenState extends State<RolesScreen> {
                           ],
                         );
                       }).toList(),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );

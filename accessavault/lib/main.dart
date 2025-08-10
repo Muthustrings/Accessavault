@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:accessavault/client_provider.dart';
+import 'package:accessavault/role_provider.dart';
+import 'package:accessavault/app_provider.dart';
+import 'package:accessavault/group_provider.dart';
 
 class UserProvider extends ChangeNotifier {
   List<Map<String, String>> _users = [];
@@ -86,11 +89,26 @@ void main() async {
   final userProvider = UserProvider();
   await userProvider.initialize();
 
+  final clientProvider = ClientProvider();
+  await clientProvider.initialize();
+
+  final roleProvider = RoleProvider();
+  await roleProvider.initialize();
+
+  final appProvider = AppProvider();
+  await appProvider.initialize();
+
+  final groupProvider = GroupProvider();
+  await groupProvider.initialize();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => userProvider),
-        ChangeNotifierProvider(create: (context) => ClientProvider()),
+        ChangeNotifierProvider(create: (_) => clientProvider),
+        ChangeNotifierProvider(create: (_) => roleProvider),
+        ChangeNotifierProvider(create: (_) => appProvider),
+        ChangeNotifierProvider(create: (_) => groupProvider),
       ],
       child: const MyApp(),
     ),

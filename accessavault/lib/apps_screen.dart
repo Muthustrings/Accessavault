@@ -1,25 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'add_app_screen.dart';
-
-class App {
-  final String name;
-  final String id;
-  final String linkedClient;
-  final String type;
-  final String status;
-  final IconData icon;
-  final Color iconColor;
-
-  App({
-    required this.name,
-    required this.id,
-    required this.linkedClient,
-    required this.type,
-    required this.status,
-    required this.icon,
-    required this.iconColor,
-  });
-}
+import 'package:accessavault/app_provider.dart'; // Import the new AppProvider
 
 class AppsScreen extends StatefulWidget {
   const AppsScreen({Key? key}) : super(key: key);
@@ -29,44 +11,14 @@ class AppsScreen extends StatefulWidget {
 }
 
 class _AppsScreenState extends State<AppsScreen> {
-  final List<App> _apps = [
-    App(
-      name: 'Project Management',
-      id: 'APP1001',
-      linkedClient: 'Client A',
-      type: 'Web',
-      status: 'Active',
-      icon: Icons.bar_chart,
-      iconColor: Colors.green,
-    ),
-    App(
-      name: 'Mobile CRM',
-      id: 'APP1002',
-      linkedClient: 'Client B',
-      type: 'Mobile',
-      status: 'Active',
-      icon: Icons.phone_android,
-      iconColor: Colors.green,
-    ),
-    App(
-      name: 'Data Analytics',
-      id: 'APP1003',
-      linkedClient: 'Client C',
-      type: 'Web',
-      status: 'Active',
-      icon: Icons.analytics,
-      iconColor: Colors.blue,
-    ),
-    App(
-      name: 'Email Service',
-      id: 'APP1004',
-      linkedClient: 'Client D',
-      type: 'Web',
-      status: 'Inactive',
-      icon: Icons.email,
-      iconColor: Colors.deepOrange,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Load apps when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().loadApps();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +26,10 @@ class _AppsScreenState extends State<AppsScreen> {
       appBar: AppBar(
         title: const Text(
           'Apps',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 28.0,
+          ), // Increased font size
         ),
         actions: [
           Padding(
@@ -93,35 +48,44 @@ class _AppsScreenState extends State<AppsScreen> {
                   ),
                 ),
                 padding: MaterialStateProperty.all(
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                  const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ), // Smaller padding
                 ),
               ),
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AddAppScreen()),
                 );
+                context.read<AppProvider>().loadApps(); // Reload apps after adding
               },
-              child: const Text('+ Add App', style: TextStyle(fontSize: 20.0)),
+              child: const Text(
+                '+ Add App',
+                style: TextStyle(fontSize: 16.0),
+              ), // Smaller font size
             ),
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            DataTable(
-              columns: const [
-                DataColumn(label: Text('App Name')),
-                DataColumn(label: Text('App ID')),
-                DataColumn(label: Text('Linked Client')),
-                DataColumn(label: Text('App Type')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Actions')),
-              ],
-              rows:
-                  _apps.map((app) {
+        child: Consumer<AppProvider>(
+          builder: (context, appProvider, child) {
+            final apps = appProvider.apps;
+            return ListView(
+              children: [
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('App Name')),
+                    DataColumn(label: Text('App ID')),
+                    DataColumn(label: Text('Linked Client')),
+                    DataColumn(label: Text('App Type')),
+                    DataColumn(label: Text('Status')),
+                    DataColumn(label: Text('Actions')),
+                  ],
+                  rows: apps.map((app) {
                     return DataRow(
                       cells: [
                         DataCell(
@@ -143,10 +107,9 @@ class _AppsScreenState extends State<AppsScreen> {
                               vertical: 4.0,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                                  app.status == 'Active'
-                                      ? Colors.green.shade600
-                                      : Colors.grey.shade600,
+                              color: app.status == 'Active'
+                                  ? Colors.green.shade600
+                                  : Colors.grey.shade600,
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Text(
@@ -161,13 +124,13 @@ class _AppsScreenState extends State<AppsScreen> {
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
-                                  _editApp(app);
+                                  _editApp(context, app);
                                 },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.delete),
                                 onPressed: () {
-                                  _deleteApp(app);
+                                  _deleteApp(context, app);
                                 },
                               ),
                             ],
@@ -176,23 +139,25 @@ class _AppsScreenState extends State<AppsScreen> {
                       ],
                     );
                   }).toList(),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  void _editApp(App app) {
+  void _editApp(BuildContext context, App app) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddAppScreen(app: app)),
-    );
+    ).then((_) {
+      context.read<AppProvider>().loadApps(); // Reload apps after editing
+    });
   }
 
-  void _deleteApp(App app) {
-    setState(() {
-      _apps.remove(app);
-    });
+  void _deleteApp(BuildContext context, App app) {
+    context.read<AppProvider>().deleteApp(app.id);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'apps_screen.dart';
+import 'package:accessavault/app_provider.dart'; // Import App class definition
+
 
 class AddAppScreen extends StatefulWidget {
   const AddAppScreen({Key? key, this.app}) : super(key: key);

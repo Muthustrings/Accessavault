@@ -7,7 +7,6 @@ import 'roles_screen.dart';
 import 'dashboard_screen.dart';
 import 'clients_screen.dart';
 import 'apps_screen.dart';
-import 'add_app_screen.dart'; // Import AddAppScreen
 
 class MainLayout extends StatefulWidget {
   const MainLayout({Key? key}) : super(key: key);

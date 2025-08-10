@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:accessavault/multiple_groups_screen.dart';
 import 'single_group_screen.dart';
+import 'package:accessavault/group_provider.dart'; // Import the new GroupProvider
 
 class GroupsScreenContent extends StatefulWidget {
   const GroupsScreenContent({super.key});
@@ -10,6 +12,15 @@ class GroupsScreenContent extends StatefulWidget {
 }
 
 class _GroupsScreenContentState extends State<GroupsScreenContent> {
+  @override
+  void initState() {
+    super.initState();
+    // Load groups when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GroupProvider>().loadGroups();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

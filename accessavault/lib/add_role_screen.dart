@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:accessavault/user_selection_screen.dart';
 
 class AddRoleScreen extends StatefulWidget {
   final Function(Map<String, String>, List<String>?) onRoleAdded;
@@ -70,7 +71,49 @@ class _AddRoleScreenState extends State<AddRoleScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  Text(_selectedUsers.join(', ')),
+                  GestureDetector(
+                    onTap: () async {
+                      final selected = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserSelectionScreen(
+                            initialSelectedUsers: _selectedUsers,
+                          ),
+                        ),
+                      );
+                      if (selected != null) {
+                        setState(() {
+                          _selectedUsers
+                              ..clear()
+                              ..addAll(selected.cast<String>());
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _selectedUsers.isEmpty
+                                  ? 'Select users'
+                                  : _selectedUsers.join(', '),
+                              style: TextStyle(
+                                color: _selectedUsers.isEmpty
+                                    ? Colors.grey[600]
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
+                          const Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
