@@ -18,20 +18,19 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 4; // 0 for Dashboard, 1 for Users, 4 for Clients
 
-  final List<Widget> _screens = [];
+  final List<Widget> _screens = const [
+    DashboardScreen(),
+    UsersScreen(),
+    RolesScreen(),
+    GroupsScreenContent(),
+    ClientsScreen(),
+    AppsScreen(),
+    SettingsScreenContent(),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _screens.addAll([
-      DashboardScreen(),
-      UsersScreen(),
-      RolesScreen(),
-      GroupsScreenContent(),
-      ClientsScreen(),
-      AppsScreen(),
-      SettingsScreenContent(),
-    ]);
   }
 
   void _onItemTapped(int index) {
@@ -81,7 +80,7 @@ class _MainLayoutState extends State<MainLayout> {
                   label: 'Settings',
                 ),
               ],
-              selectedItemColor: Color(0xFF0B2447),
+              selectedItemColor: const Color(0xFF0B2447), // Added const
               unselectedItemColor: Colors.grey,
               showUnselectedLabels: true,
             ),
@@ -107,19 +106,19 @@ class _MainLayoutState extends State<MainLayout> {
       color: const Color(0xFF0B2447),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 32),
+        children: <Widget>[
+          const SizedBox(height: 32),
           Row(
-            children: [
-              SizedBox(width: 24),
-              CircleAvatar(
+            children: <Widget>[
+              const SizedBox(width: 24),
+              const CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 22,
                 child: Icon(Icons.shield, color: Color(0xFF0B2447), size: 28),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               if (width > 200)
-                Text(
+                const Text(
                   'AccessaVault',
                   style: TextStyle(
                     color: Colors.white,
@@ -130,7 +129,7 @@ class _MainLayoutState extends State<MainLayout> {
                 ),
             ],
           ),
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           _SidebarItem(
             icon: Icons.dashboard,
             label: 'Dashboard',
@@ -180,7 +179,7 @@ class _MainLayoutState extends State<MainLayout> {
             onTap: () => _onItemTapped(6),
             isExpanded: width > 200,
           ),
-          Spacer(),
+          const Spacer(),
           Padding(
             padding: const EdgeInsets.only(
               bottom: 32.0,
@@ -193,22 +192,25 @@ class _MainLayoutState extends State<MainLayout> {
                 // TODO: Implement logout logic
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(Icons.logout, color: Colors.white, size: 24),
-                  if (width > 200) ...[
-                    SizedBox(width: 16),
-                    Text(
-                      'Logout',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    const Icon(Icons.logout, color: Colors.white, size: 22),
+                    if (width > 200) ...[
+                      const SizedBox(width: 18),
+                      const Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -224,12 +226,12 @@ class SettingsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xFFF7F9FB),
-      padding: EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+      color: const Color(0xFFF7F9FB), // Added const
+      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40), // Added const
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+        children: <Widget>[
+          const Text(
             'Settings',
             style: TextStyle(
               fontSize: 40,
@@ -237,13 +239,13 @@ class SettingsScreenContent extends StatelessWidget {
               color: Color(0xFF0B2447),
             ),
           ),
-          SizedBox(height: 36),
+          const SizedBox(height: 36),
           _SettingsTile(
             title: 'General',
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()), // Added const
               );
             },
           ),
@@ -253,7 +255,7 @@ class SettingsScreenContent extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => NotificationsSettingsScreen(),
+                  builder: (context) => const NotificationsSettingsScreen(), // Added const
                 ),
               );
             },
@@ -279,10 +281,10 @@ class _SettingsTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             Text(
               title,
-              style: TextStyle(fontSize: 24, color: Color(0xFF23395d)),
+              style: const TextStyle(fontSize: 24, color: Color(0xFF23395d)), // Added const
             ),
             Icon(Icons.chevron_right, color: Colors.grey[600], size: 32),
           ],
@@ -310,7 +312,7 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12), // Added const
       child: Material(
         color: selected ? Colors.white.withOpacity(0.08) : Colors.transparent,
         borderRadius: BorderRadius.circular(10),
@@ -320,13 +322,13 @@ class _SidebarItem extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             child: Row(
-              children: [
+              children: <Widget>[
                 Icon(icon, color: Colors.white, size: 22),
                 if (isExpanded) ...[
-                  SizedBox(width: 18),
+                  const SizedBox(width: 18), // Added const
                   Text(
                     label,
-                    style: TextStyle(
+                    style: const TextStyle( // Added const
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

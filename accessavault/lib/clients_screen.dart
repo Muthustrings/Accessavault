@@ -52,7 +52,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
           ),
         ),
         title: const Text(''), // Empty title as "Clients" is now in leading
-        actions: [
+        actions: <Widget>[
           // The Spacer() is no longer needed here as the leading widget handles the left alignment
           TextButton(
             style: ButtonStyle(
@@ -94,7 +94,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          children: [
+          children: <Widget>[
             DataTable(
               columns: const [
                 DataColumn(label: Text('Client ID')),
@@ -107,7 +107,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
               rows:
                   clients.map((client) {
                     return DataRow(
-                      cells: [
+                      cells: <DataCell>[
                         DataCell(Text(client.id)),
                         DataCell(Text(client.contactPerson)),
                         DataCell(Text(client.email)),
@@ -115,7 +115,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                         DataCell(Text(client.status)),
                         DataCell(
                           Row(
-                            children: [
+                            children: <Widget>[
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () => _editClient(client),

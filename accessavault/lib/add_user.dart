@@ -70,7 +70,7 @@ class _AddUserPageState extends State<AddUserPage> {
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     _buildTextField(
                       label: 'Full Name',
                       initialValue: _name,
@@ -133,7 +133,7 @@ class _AddUserPageState extends State<AddUserPage> {
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
+                      children: <Widget>[
                         OutlinedButton(
                           onPressed: () {
                             Navigator.of(context).pop();
@@ -207,7 +207,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         TextFormField(
@@ -230,7 +230,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -256,7 +256,7 @@ class _AddUserPageState extends State<AddUserPage> {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         DropdownButtonFormField<Client>(

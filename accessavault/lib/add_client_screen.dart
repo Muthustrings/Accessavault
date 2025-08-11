@@ -113,7 +113,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 TextFormField(
                   controller: _clientNameController,
                   decoration: const InputDecoration(labelText: 'Client Name'),
@@ -126,7 +126,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: TextFormField(
                         controller: _clientIdController,
@@ -154,7 +154,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: TextFormField(
                         controller: _contactPersonController,
@@ -186,7 +186,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: TextFormField(
                         controller: _addressController,
@@ -204,17 +204,17 @@ class _AddClientScreenState extends State<AddClientScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Row(
-                  children: [
+                  children: <Widget>[
                     Expanded(
                       child: DropdownButtonFormField<String>(
                         decoration: const InputDecoration(labelText: 'Status'),
                         value: _statusValue, // Default value
                         items: const [
-                          DropdownMenuItem(
+                          DropdownMenuItem<String>( // Added type argument
                             value: 'Active',
                             child: Text('Active'),
                           ),
-                          DropdownMenuItem(
+                          DropdownMenuItem<String>( // Added type argument
                             value: 'Inactive',
                             child: Text('Inactive'),
                           ),
@@ -256,7 +256,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
                 const SizedBox(height: 24.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: <Widget>[
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:accessavault/app_provider.dart'; // Import App class definition
+import 'package:file_picker/file_picker.dart';
 
 
 class AddAppScreen extends StatefulWidget {
@@ -12,13 +13,27 @@ class AddAppScreen extends StatefulWidget {
 }
 
 class _AddAppScreenState extends State<AddAppScreen> {
+  String? _pickedFileName;
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      setState(() {
+        _pickedFileName = result.files.single.name;
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.app == null ? 'Add Application' : 'Edit Application',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
       ),
       body: Padding(
@@ -62,25 +77,28 @@ class _AddAppScreenState extends State<AddAppScreen> {
               const SizedBox(height: 20),
 
               // Upload Image
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 50,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Drag & drop or click to upload',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ],
+              InkWell(
+                onTap: _pickFile,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.cloud_upload_outlined,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _pickedFileName ?? 'Drag & drop or click to upload',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
