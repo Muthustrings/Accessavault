@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'add_app_screen.dart';
 import 'package:accessavault/app_provider.dart'; // Import the new AppProvider
+import 'package:accessavault/client_provider.dart'; // Import ClientProvider
 
 class AppsScreen extends StatefulWidget {
   const AppsScreen({Key? key}) : super(key: key);
@@ -74,18 +75,23 @@ class _AppsScreenState extends State<AppsScreen> {
         child: Consumer<AppProvider>(
           builder: (context, appProvider, child) {
             final apps = appProvider.apps;
+            final clientProvider = Provider.of<ClientProvider>(context); // Get ClientProvider
             return ListView(
               children: [
                 DataTable(
                   columns: const [
                     DataColumn(label: Text('App Name')),
                     DataColumn(label: Text('App ID')),
-                    DataColumn(label: Text('Linked Client')),
+                    DataColumn(label: Text('Client')),
                     DataColumn(label: Text('App Type')),
                     DataColumn(label: Text('Status')),
                     DataColumn(label: Text('Actions')),
                   ],
                   rows: apps.map((app) {
+                    final clientName = clientProvider.clients
+                        .firstWhere((client) => client.id == app.clientId,
+                            orElse: () => Client(id: '', name: 'N/A', contactPerson: '', email: '', website: '', status: ''))
+                        .name;
                     return DataRow(
                       cells: [
                         DataCell(
@@ -98,7 +104,7 @@ class _AppsScreenState extends State<AppsScreen> {
                           ),
                         ),
                         DataCell(Text(app.id)),
-                        DataCell(Text(app.linkedClient)),
+                        DataCell(Text(clientName)), // Display client name
                         DataCell(Text(app.type)),
                         DataCell(
                           Container(

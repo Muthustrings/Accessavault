@@ -5,18 +5,28 @@ import 'dart:convert';
 class App {
   final String name;
   final String id;
-  final String linkedClient;
+  final String? clientId; // Changed from 'client' to 'clientId' and made nullable
   final String type;
   final String status;
+  final String image;
+  final String description;
+  final String redirectUrl;
+  final List<String> assignedGroups;
+  final List<String> assignedUsers;
   final IconData icon;
   final Color iconColor;
 
   App({
     required this.name,
     required this.id,
-    required this.linkedClient,
+    this.clientId, // Changed from 'client' to 'clientId'
     required this.type,
     required this.status,
+    required this.image,
+    required this.description,
+    required this.redirectUrl,
+    required this.assignedGroups,
+    required this.assignedUsers,
     required this.icon,
     required this.iconColor,
   });
@@ -24,9 +34,14 @@ class App {
   Map<String, dynamic> toJson() => {
         'name': name,
         'id': id,
-        'linkedClient': linkedClient,
+        'clientId': clientId, // Changed from 'client' to 'clientId'
         'type': type,
         'status': status,
+        'image': image,
+        'description': description,
+        'redirectUrl': redirectUrl,
+        'assignedGroups': assignedGroups,
+        'assignedUsers': assignedUsers,
         'iconCodePoint': icon.codePoint,
         'iconFontFamily': icon.fontFamily,
         'iconFontPackage': icon.fontPackage,
@@ -36,9 +51,14 @@ class App {
   factory App.fromJson(Map<String, dynamic> json) => App(
         name: json['name'],
         id: json['id'],
-        linkedClient: json['linkedClient'],
+        clientId: json['clientId'], // Changed from 'client' to 'clientId'
         type: json['type'],
         status: json['status'],
+        image: json['image'] ?? '',
+        description: json['description'] ?? '',
+        redirectUrl: json['redirectUrl'] ?? '',
+        assignedGroups: List<String>.from(json['assignedGroups'] ?? []),
+        assignedUsers: List<String>.from(json['assignedUsers'] ?? []),
         icon: IconData(
           json['iconCodePoint'],
           fontFamily: json['iconFontFamily'],
@@ -95,36 +115,56 @@ class AppProvider with ChangeNotifier {
           App(
             name: 'Project Management',
             id: 'APP1001',
-            linkedClient: 'Client A',
+            clientId: 'CLIENT001', // Changed to clientId
             type: 'Web',
             status: 'Active',
+            image: '',
+            description: 'A comprehensive project management tool.',
+            redirectUrl: 'https://project.acme.com',
+            assignedGroups: ['Developers'],
+            assignedUsers: [],
             icon: Icons.bar_chart,
             iconColor: Colors.green,
           ),
           App(
             name: 'Mobile CRM',
             id: 'APP1002',
-            linkedClient: 'Client B',
+            clientId: 'CLIENT002', // Changed to clientId
             type: 'Mobile',
             status: 'Active',
+            image: '',
+            description: 'CRM solution for mobile sales teams.',
+            redirectUrl: 'https://crm.globex.com',
+            assignedGroups: ['Marketing'],
+            assignedUsers: [],
             icon: Icons.phone_android,
             iconColor: Colors.green,
           ),
           App(
             name: 'Data Analytics',
             id: 'APP1003',
-            linkedClient: 'Client C',
+            clientId: 'CLIENT003', // Changed to clientId
             type: 'Web',
             status: 'Active',
+            image: '',
+            description: 'Advanced data analytics platform.',
+            redirectUrl: 'https://analytics.stark.com',
+            assignedGroups: ['Sales'],
+            assignedUsers: [],
             icon: Icons.analytics,
             iconColor: Colors.blue,
           ),
           App(
             name: 'Email Service',
             id: 'APP1004',
-            linkedClient: 'Client D',
+            clientId: 'CLIENT004', // Changed to clientId
             type: 'Web',
             status: 'Inactive',
+            image: '',
+            description: 'Secure email communication service.',
+            redirectUrl: 'https://email.wayne.com',
+            assignedGroups: ['Support'],
+            assignedUsers: [],
             icon: Icons.email,
             iconColor: Colors.deepOrange,
           ),

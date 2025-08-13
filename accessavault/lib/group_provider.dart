@@ -6,23 +6,27 @@ class Group {
   String name;
   String description;
   List<String> users; // List of user IDs or names associated with this group
+  String? clientId; // Added clientId to link groups to clients
 
   Group({
     required this.name,
     required this.description,
     this.users = const [],
+    this.clientId, // Added to constructor
   });
 
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
         'users': users,
+        'clientId': clientId, // Added to toJson
       };
 
   factory Group.fromJson(Map<String, dynamic> json) => Group(
         name: json['name'],
         description: json['description'],
         users: List<String>.from(json['users'] ?? []),
+        clientId: json['clientId'], // Added to fromJson
       );
 }
 
@@ -70,9 +74,10 @@ class GroupProvider with ChangeNotifier {
       } else {
         // Initialize with default groups if none exist
         _groups = [
-          Group(name: 'Developers', description: 'Software development team'),
-          Group(name: 'Marketing', description: 'Marketing team'),
-          Group(name: 'Sales', description: 'Sales team'),
+          Group(name: 'Developers', description: 'Software development team', clientId: 'CLIENT001'),
+          Group(name: 'Marketing', description: 'Marketing team', clientId: 'CLIENT002'),
+          Group(name: 'Sales', description: 'Sales team', clientId: 'CLIENT001'),
+          Group(name: 'Support', description: 'Customer support team', clientId: 'CLIENT003'),
         ];
         await _saveGroups(); // Save default groups
       }

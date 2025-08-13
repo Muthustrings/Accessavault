@@ -98,71 +98,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 24),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: _buildBarChartCard(
-                      'User Status',
-                      [
-                        BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(
-                              toY: totalUsers.toDouble(),
-                              color: Colors.lightBlueAccent,
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              toY: activeUsers.toDouble(),
-                              color: Colors.blue.shade800,
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                      ],
-                      ['Total', 'Active'],
-                      totalUsers,
-                      activeUsers,
+                      'User Roles',
+                      _getUserRoleBarChartData(userProvider.users, roleProvider.roles),
+                      _getUserRoleTitles(roleProvider.roles),
+                      userProvider.users.length, // Pass total users for maxY calculation
+                      0, // Not directly used for this chart's maxY, but needed for function signature
                     ),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
-                    child: _buildPieChartCard('Client Status', [
-                      PieChartSectionData(
-                        color: Colors.lightBlueAccent,
-                        value:
-                            clientProvider.clients
-                                .where((c) => c.status == 'Active')
-                                .length
-                                .toDouble(),
-                        title: 'Active',
-                        radius: 50,
-                        titleStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      PieChartSectionData(
-                        color: Colors.blue.shade800,
-                        value:
-                            clientProvider.clients
-                                .where((c) => c.status == 'Inactive')
-                                .length
-                                .toDouble(),
-                        title: 'Inactive',
-                        radius: 50,
-                        titleStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ]),
+                    child: _buildPieChartCard(
+                      'Groups by Client',
+                      _getGroupsByClientPieChartData(groupProvider.groups, clientProvider.clients),
+                    ),
                   ),
                 ],
               ),
@@ -339,5 +291,91 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
+  }
+
+  List<BarChartGroupData> _getUserRoleBarChartData(
+      List<Map<String, dynamic>> users, List<dynamic> roles) {
+    final Map<String, int> roleCounts = {};
+    for (var role in roles) {
+      roleCounts[role.name] = 0;
+    }
+
+    for (var user in users) {
+      final userRole = user['role'];
+      if (roleCounts.containsKey(userRole)) {
+        roleCounts[userRole] = roleCounts[userRole]! + 1;
+      }
+    }
+
+    return roleCounts.entries.map((entry) {
+      final index = roles.indexWhere((role) => role.name == entry.key);
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: entry.value.toDouble(),
+            color: Colors.blue.shade700,
+            width: 20,
+          ),
+        ],
+      );
+    }).toList();
+  }
+
+  List<String> _getUserRoleTitles(List<dynamic> roles) {
+    return roles.map((role) => role.name.toString()).toList();
+  }
+
+  List<PieChartSectionData> _getGroupsByClientPieChartData(
+      List<dynamic> groups, List<dynamic> clients) {
+    final Map<String, int> clientGroupCounts = {};
+    final Map<String, String> clientIdToName = {
+      for (var client in clients) client.id: client.name
+    };
+
+    for (var client in clients) {
+      clientGroupCounts[client.name] = 0;
+    }
+
+    for (var group in groups) {
+      final clientName = clientIdToName[group.clientId];
+      if (clientName != null && clientGroupCounts.containsKey(clientName)) {
+        clientGroupCounts[clientName] = clientGroupCounts[clientName]! + 1;
+      }
+    }
+
+    final List<Color> pieColors = [
+      Colors.blue.shade700,
+      Colors.lightBlueAccent,
+      Colors.cyan.shade700,
+      Colors.teal.shade700,
+      Colors.green.shade700,
+      Colors.lime.shade700,
+      Colors.amber.shade700,
+      Colors.orange.shade700,
+      Colors.deepOrange.shade700,
+      Colors.red.shade700,
+      Colors.pink.shade700,
+      Colors.purple.shade700,
+      Colors.deepPurple.shade700,
+      Colors.indigo.shade700,
+    ];
+
+    int colorIndex = 0;
+    return clientGroupCounts.entries.map((entry) {
+      final color = pieColors[colorIndex % pieColors.length];
+      colorIndex++;
+      return PieChartSectionData(
+        color: color,
+        value: entry.value.toDouble(),
+        title: entry.key,
+        radius: 50,
+        titleStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
   }
 }

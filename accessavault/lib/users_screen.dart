@@ -169,13 +169,14 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                                             orElse:
                                                 () => Client(
                                                   id: '',
+                                                  name: 'N/A', // Added name
                                                   contactPerson: 'N/A',
                                                   email: '',
                                                   website: '',
                                                   status: '',
                                                 ),
                                           );
-                                      return Text(client.contactPerson);
+                                      return Text(client.name); // Display client name instead of contact person
                                     },
                                   ),
                                 ), // Added Client column

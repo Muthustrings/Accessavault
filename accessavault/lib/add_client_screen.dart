@@ -73,6 +73,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
       );
       final newClient = Client(
         id: _clientIdController.text,
+        name: _clientNameController.text, // Added name
         contactPerson: _contactPersonController.text,
         email: _emailController.text,
         website: _websiteController.text,

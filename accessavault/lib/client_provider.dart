@@ -4,6 +4,7 @@ import 'dart:convert';
 
 class Client {
   String id;
+  String name; // Added name property
   String contactPerson;
   String email;
   String website;
@@ -11,6 +12,7 @@ class Client {
 
   Client({
     required this.id,
+    required this.name, // Added to constructor
     required this.contactPerson,
     required this.email,
     required this.website,
@@ -19,6 +21,7 @@ class Client {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'name': name, // Added to toJson
         'contactPerson': contactPerson,
         'email': email,
         'website': website,
@@ -27,6 +30,7 @@ class Client {
 
   factory Client.fromJson(Map<String, dynamic> json) => Client(
         id: json['id'],
+        name: json['name'], // Added to fromJson
         contactPerson: json['contactPerson'],
         email: json['email'],
         website: json['website'],
@@ -80,6 +84,7 @@ class ClientProvider with ChangeNotifier {
         _clients = [
           Client(
             id: 'CLIENT001',
+            name: 'Acme Corp', // Added name
             contactPerson: 'John Smith',
             email: 'john.smith@acme.com',
             website: 'acme.com',
@@ -87,6 +92,7 @@ class ClientProvider with ChangeNotifier {
           ),
           Client(
             id: 'CLIENT002',
+            name: 'Globex Inc.', // Added name
             contactPerson: 'Susan Johnson',
             email: 's.johnson@globex.com',
             website: 'globex.com',
@@ -94,6 +100,7 @@ class ClientProvider with ChangeNotifier {
           ),
           Client(
             id: 'CLIENT003',
+            name: 'Stark Industries', // Added name
             contactPerson: 'Tony Stark',
             email: 't.stark.stark.com',
             website: 'stark.com',
@@ -101,6 +108,7 @@ class ClientProvider with ChangeNotifier {
           ),
           Client(
             id: 'CLIENT004',
+            name: 'Wayne Enterprises', // Added name
             contactPerson: 'Bruce Wayne',
             email: 'bruce@wayne.com',
             website: 'wayne.com',
