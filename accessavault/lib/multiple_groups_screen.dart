@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:accessavault/create_multiple_groups_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:accessavault/group_provider.dart';
 
 class MultipleGroupsScreen extends StatefulWidget {
   const MultipleGroupsScreen({super.key});
@@ -9,53 +11,17 @@ class MultipleGroupsScreen extends StatefulWidget {
 }
 
 class _MultipleGroupsScreenState extends State<MultipleGroupsScreen> {
-  final List<Map<String, dynamic>> _groups = [
-    {
-      "name": "Engineering_Team",
-      "description": "Construction supporting tenns",
-      "roles": ["Developer", "Manager", "Analyst"],
-      "members": "Feb 10, 2023",
-      "selected": false,
-    },
-    {
-      "name": "Sales_Regional",
-      "description": "Handles basic management",
-      "roles": ["Analyst", "Researcher"],
-      "members": "Sep 27, 2023",
-      "selected": false,
-    },
-    {
-      "name": "Compliance_2024",
-      "description": "Conduct trainee committees",
-      "roles": ["Admin", "Researcher"],
-      "members": "Jan 5, 2024",
-      "selected": false,
-    },
-    {
-      "name": "Research_&_Development",
-      "description": "Develop asset roles",
-      "roles": ["Whemer"],
-      "members": "Mar 15, 2023",
-      "selected": false,
-    },
-    {
-      "name": "IT_Support",
-      "description": "Resourcing time management",
-      "roles": ["Admin"],
-      "members": "Aug 19, 2023",
-      "selected": false,
-    },
-  ];
+  Set<String> _selectedGroupNames = {}; // To store names of selected groups
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Multiple Groups'),
+        title: const Text('Multiple Groups'),
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-        titleTextStyle: TextStyle(
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(
           color: Colors.black,
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -79,41 +45,88 @@ class _MultipleGroupsScreenState extends State<MultipleGroupsScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        const CreateMultipleGroupsScreen(),
+                                builder: (context) =>
+                                    const CreateMultipleGroupsScreen(),
                               ),
                             );
                           },
-                          child: Text('Create Groups'),
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            backgroundColor: Color(0xFF00529B),
+                            backgroundColor: const Color(0xFF00529B),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
+                          child: const Text('Create Groups'),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         OutlinedButton(
-                          onPressed: () {},
+                          onPressed: _selectedGroupNames.length == 1
+                              ? () {
+                                  final selectedGroupName = _selectedGroupNames.first;
+                                  final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+                                  final groupToEdit = groupProvider.groups.firstWhere(
+                                    (group) => group.name == selectedGroupName,
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CreateMultipleGroupsScreen(
+                                        group: groupToEdit,
+                                      ),
+                                    ),
+                                  ).then((_) {
+                                    // Clear selection after returning from edit screen
+                                    setState(() {
+                                      _selectedGroupNames.clear();
+                                    });
+                                  });
+                                }
+                              : null, // Disable if not exactly one group is selected
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Color(0xFF00529B),
-                            side: BorderSide(color: Color(0xFF00529B)),
+                            foregroundColor: const Color(0xFF00529B),
+                            side: const BorderSide(color: Color(0xFF00529B)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
-                          child: Text('Edit Selected'),
+                          child: const Text('Edit Selected'),
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
+                        OutlinedButton(
+                          onPressed: _selectedGroupNames.isNotEmpty
+                              ? () {
+                                  final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+                                  for (String groupName in _selectedGroupNames) {
+                                    groupProvider.deleteGroup(groupName);
+                                  }
+                                  setState(() {
+                                    _selectedGroupNames.clear();
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Selected groups deleted!')),
+                                  );
+                                }
+                              : null, // Disable if no groups are selected
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            side: const BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          child: const Text('Delete Selected'),
+                        ),
+                        const SizedBox(width: 10),
                         OutlinedButton.icon(
-                          onPressed: () {},
-                          icon: Icon(Icons.filter_list),
-                          label: Text('Filters'),
+                          onPressed: () {
+                            // Handle filters
+                          },
+                          icon: const Icon(Icons.filter_list),
+                          label: const Text('Filters'),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.black,
-                            side: BorderSide(color: Colors.grey),
+                            side: const BorderSide(color: Colors.grey),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
@@ -130,41 +143,88 @@ class _MultipleGroupsScreenState extends State<MultipleGroupsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      const CreateMultipleGroupsScreen(),
+                              builder: (context) =>
+                                  const CreateMultipleGroupsScreen(),
                             ),
                           );
                         },
-                        child: Text('Create Groups'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          backgroundColor: Color(0xFF00529B),
+                          backgroundColor: const Color(0xFF00529B),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
+                        child: const Text('Create Groups'),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       OutlinedButton(
-                        onPressed: () {},
+                        onPressed: _selectedGroupNames.length == 1
+                            ? () {
+                                final selectedGroupName = _selectedGroupNames.first;
+                                final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+                                final groupToEdit = groupProvider.groups.firstWhere(
+                                  (group) => group.name == selectedGroupName,
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateMultipleGroupsScreen(
+                                      group: groupToEdit,
+                                    ),
+                                  ),
+                                ).then((_) {
+                                  // Clear selection after returning from edit screen
+                                  setState(() {
+                                    _selectedGroupNames.clear();
+                                  });
+                                });
+                              }
+                            : null, // Disable if not exactly one group is selected
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color(0xFF00529B),
-                          side: BorderSide(color: Color(0xFF00529B)),
+                          foregroundColor: const Color(0xFF00529B),
+                          side: const BorderSide(color: Color(0xFF00529B)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        child: Text('Edit Selected'),
+                        child: const Text('Edit Selected'),
                       ),
-                      Spacer(),
+                      const SizedBox(width: 10),
+                      OutlinedButton(
+                        onPressed: _selectedGroupNames.isNotEmpty
+                            ? () {
+                                final groupProvider = Provider.of<GroupProvider>(context, listen: false);
+                                for (String groupName in _selectedGroupNames) {
+                                  groupProvider.deleteGroup(groupName);
+                                }
+                                setState(() {
+                                  _selectedGroupNames.clear();
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Selected groups deleted!')),
+                                );
+                              }
+                            : null, // Disable if no groups are selected
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: const Text('Delete Selected'),
+                      ),
+                      const Spacer(),
                       OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.filter_list),
-                        label: Text('Filters'),
+                        onPressed: () {
+                          // Handle filters
+                        },
+                        icon: const Icon(Icons.filter_list),
+                        label: const Text('Filters'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey),
+                          side: const BorderSide(color: Colors.grey),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -175,59 +235,112 @@ class _MultipleGroupsScreenState extends State<MultipleGroupsScreen> {
                 }
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columnSpacing: 38.0,
-                    columns: const <DataColumn>[
-                      DataColumn(label: Text('')),
-                      DataColumn(label: Text('Group Name')),
-                      DataColumn(label: Text('Description')),
-                      DataColumn(label: Text('Roles Assigned')),
-                      DataColumn(label: Text('Members')),
-                    ],
-                    rows:
-                        _groups.map((group) {
+              child: Consumer<GroupProvider>(
+                builder: (context, groupProvider, child) {
+                  final groups = groupProvider.groups;
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columnSpacing: 38.0,
+                        columns: const <DataColumn>[
+                          DataColumn(label: Text('')),
+                          DataColumn(label: Text('Group Name')),
+                          DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('Members')),
+                          DataColumn(label: Text('Actions')), // Added Actions column
+                        ],
+                        rows: groups.map((group) {
+                          final isSelected = _selectedGroupNames.contains(group.name);
                           return DataRow(
                             cells: <DataCell>[
                               DataCell(
                                 Checkbox(
-                                  value: group['selected'],
+                                  value: isSelected,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      group['selected'] = value!;
+                                      if (value == true) {
+                                        _selectedGroupNames.add(group.name);
+                                      } else {
+                                        _selectedGroupNames.remove(group.name);
+                                      }
                                     });
                                   },
                                 ),
                               ),
-                              DataCell(Text(group['name'])),
-                              DataCell(Text(group['description'])),
+                              DataCell(Text(group.name)),
+                              DataCell(Text(group.description)),
+                              DataCell(Text(group.users.length.toString())),
                               DataCell(
-                                Wrap(
-                                  spacing: 8.0,
-                                  runSpacing: 4.0,
-                                  children:
-                                      (group['roles'] as List<String>)
-                                          .map(
-                                            (role) => Chip(
-                                              label: Text(role),
-                                              backgroundColor:
-                                                  Colors.grey.shade200,
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CreateMultipleGroupsScreen(
+                                              group: group,
                                             ),
-                                          )
-                                          .toList(),
+                                          ),
+                                        ).then((_) {
+                                          // Clear selection after returning from edit screen
+                                          setState(() {
+                                            _selectedGroupNames.clear();
+                                          });
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        // Show confirmation dialog before deleting
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirm Delete'),
+                                              content: Text('Are you sure you want to delete group "${group.name}"?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Cancel'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text('Delete'),
+                                                  onPressed: () {
+                                                    groupProvider.deleteGroup(group.name);
+                                                    setState(() {
+                                                      _selectedGroupNames.remove(group.name);
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: Text('Group "${group.name}" deleted!')),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                              DataCell(Text(group['members'])),
                             ],
                           );
                         }).toList(),
-                  ),
-                ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

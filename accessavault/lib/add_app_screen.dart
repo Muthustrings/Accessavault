@@ -6,6 +6,7 @@ import 'package:provider/provider.dart'; // Import Provider package
 import 'package:accessavault/apps_screen.dart'; // Import AppsScreen
 import 'package:accessavault/group_provider.dart'; // Import GroupProvider
 import 'package:accessavault/main.dart'; // Import UserProvider from main.dart
+import 'package:desktop_drop/desktop_drop.dart'; // Import desktop_drop
 
 
 class AddAppScreen extends StatefulWidget {
@@ -194,28 +195,46 @@ class _AddAppScreenState extends State<AddAppScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Upload Image
-                InkWell(
-                  onTap: _pickFile,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          Icons.cloud_upload_outlined,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          _pickedFileName ?? 'Drag & drop or click to upload',
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                      ],
+                // Upload Image (Drag & Drop)
+                DropTarget(
+                  onDragDone: (details) {
+                    if (details.files.isNotEmpty) {
+                      setState(() {
+                        _pickedFileName = details.files.first.name;
+                      });
+                    }
+                  },
+                  onDragEntered: (details) {
+                    // Optional: Visual feedback when dragging over
+                    setState(() {}); // Rebuild to show feedback
+                  },
+                  onDragExited: (details) {
+                    // Optional: Visual feedback when dragging out
+                    setState(() {}); // Rebuild to hide feedback
+                  },
+                  child: InkWell(
+                    onTap: _pickFile, // Keep click to upload functionality
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            _pickedFileName ?? 'Drag & drop or click to upload',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          // No need for candidateData check here, DropTarget handles visual feedback internally
+                        ],
+                      ),
                     ),
                   ),
                 ),

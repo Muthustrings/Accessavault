@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
 import 'client_provider.dart'; // Import Client and ClientProvider
+import 'role_provider.dart'; // Import RoleProvider
 
 class AddUserPage extends StatefulWidget {
   final Map<String, String>? user;
@@ -16,11 +17,10 @@ class _AddUserPageState extends State<AddUserPage> {
   final _formKey = GlobalKey<FormState>();
   late String _name;
   late String _email;
-  late String _role;
+  String? _role; // Made nullable
   late String _status;
   Client? _selectedClient; // New variable for selected client
 
-  final List<String> _roles = ['Admin', 'User', 'Guest'];
   final List<String> _statuses = ['Active', 'Inactive'];
 
   @override
@@ -28,7 +28,7 @@ class _AddUserPageState extends State<AddUserPage> {
     super.initState();
     _name = widget.user?['name'] ?? '';
     _email = widget.user?['email'] ?? '';
-    _role = widget.user?['role'] ?? 'User';
+    _role = widget.user?['role']; // Initialize with existing role or null
     _status = widget.user?['status'] ?? 'Active';
     // Initialize _selectedClient if editing an existing user and client info is available
     // For simplicity, we'll assume client ID is stored in user map if applicable
@@ -109,14 +109,26 @@ class _AddUserPageState extends State<AddUserPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    _buildDropdown(
-                      label: 'Role',
-                      value: _role,
-                      items: _roles,
-                      onChanged: (value) {
-                        setState(() {
-                          _role = value ?? 'User';
-                        });
+                    Consumer<RoleProvider>(
+                      builder: (context, roleProvider, child) {
+                        final roles = roleProvider.roles.map((role) => role.name).toList();
+                        // Ensure _role is a valid value from the current roles list
+                        if (_role != null && !roles.contains(_role)) {
+                          _role = null; // Clear if current role is not in the list
+                        }
+                        if (_role == null && roles.isNotEmpty) {
+                          _role = roles.first; // Set default if no role selected and roles exist
+                        }
+                        return _buildDropdown(
+                          label: 'Role',
+                          value: _role,
+                          items: roles,
+                          onChanged: (value) {
+                            setState(() {
+                              _role = value;
+                            });
+                          },
+                        );
                       },
                     ),
                     const SizedBox(height: 16),
@@ -158,7 +170,7 @@ class _AddUserPageState extends State<AddUserPage> {
                               final userData = {
                                 'name': _name,
                                 'email': _email,
-                                'role': _role,
+                                'role': _role ?? '', // Provide empty string if _role is null
                                 'status': _status,
                                 'client_id':
                                     _selectedClient?.id ?? '', // Add client ID
@@ -224,7 +236,7 @@ class _AddUserPageState extends State<AddUserPage> {
 
   Widget _buildDropdown({
     required String label,
-    required String value,
+    required String? value, // Made nullable
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
