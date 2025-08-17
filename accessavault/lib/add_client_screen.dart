@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart'; // Import file_picker
+import 'package:uuid/uuid.dart'; // Import uuid package
 import 'client_provider.dart'; // Import Client class and ClientProvider
 
 class AddClientScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _AddClientScreenState extends State<AddClientScreen> {
   late TextEditingController _businessLogoController; // New field
   late TextEditingController _aboutBusinessController; // New field
   late TextEditingController _businessIdController; // New field
+  final Uuid _uuid = const Uuid(); // Initialize Uuid
 
   @override
   void initState() {
@@ -38,6 +39,9 @@ class _AddClientScreenState extends State<AddClientScreen> {
       text: widget.client?.name ?? '',
     );
     _clientIdController = TextEditingController(text: widget.client?.id ?? '');
+    _businessIdController = TextEditingController(
+      text: widget.client?.businessId ?? _uuid.v4(), // Generate ID if new client
+    );
     _contactPersonController = TextEditingController(
       text: widget.client?.contactPerson ?? '',
     );
@@ -69,9 +73,6 @@ class _AddClientScreenState extends State<AddClientScreen> {
     );
     _aboutBusinessController = TextEditingController(
       text: widget.client?.aboutBusiness ?? '',
-    );
-    _businessIdController = TextEditingController(
-      text: widget.client?.businessId ?? '',
     );
   }
 
@@ -151,18 +152,13 @@ class _AddClientScreenState extends State<AddClientScreen> {
               children: <Widget>[
                 TextFormField(
                   controller: _businessIdController,
+                  readOnly: true, // Make the field read-only
                   decoration: const InputDecoration(
                     labelText: 'Business ID',
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(
                         vertical: 12.0, horizontal: 16.0),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter business ID';
-                    }
-                    return null;
-                  },
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(

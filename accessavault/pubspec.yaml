@@ -43,6 +43,7 @@ dependencies:
   fl_chart: ^0.68.0 # For charts
   file_picker: ^8.0.0 # For file picking
   desktop_drop: ^0.6.1
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
