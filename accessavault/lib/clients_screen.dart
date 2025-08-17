@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io'; // Import dart:io for File
 import 'add_client_screen.dart';
 import 'client_provider.dart'; // Import the new ClientProvider
 
@@ -23,6 +24,53 @@ class _ClientsScreenState extends State<ClientsScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text('Deleted ${client.id}')));
+  }
+
+  Widget _buildLogoImage(String imageUrl) {
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return Image.network(
+        imageUrl,
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading network image from $imageUrl: $error');
+          return Image.asset(
+            'asset/image/logo.png',
+            width: 40,
+            height: 40,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    } else if (imageUrl.isNotEmpty) {
+      final File localFile = File(imageUrl);
+      if (localFile.existsSync()) {
+        return Image.file(
+          localFile,
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            print('Error loading local image from $imageUrl: $error');
+            return Image.asset(
+              'asset/image/logo.png',
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+            );
+          },
+        );
+      } else {
+        print('Local file does not exist at path: $imageUrl');
+      }
+    }
+    return Image.asset(
+      'asset/image/logo.png',
+      width: 40,
+      height: 40,
+      fit: BoxFit.cover,
+    );
   }
 
   @override
@@ -113,12 +161,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                   DataCell(Text(client.businessUserName)),
                   DataCell(
                     ClipOval(
-                      child: Image.asset(
-                        'asset/image/logo.png', // Assuming a default logo for now
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ),
+                      child: _buildLogoImage(client.businessLogoUrl),
                     ),
                   ),
                   DataCell(Text(client.aboutBusiness)),

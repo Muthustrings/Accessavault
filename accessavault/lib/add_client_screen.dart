@@ -39,8 +39,10 @@ class _AddClientScreenState extends State<AddClientScreen> {
       text: widget.client?.name ?? '',
     );
     _clientIdController = TextEditingController(text: widget.client?.id ?? '');
+    // Generate business ID only if it's a new client
+    String initialBusinessId = widget.client?.businessId ?? _uuid.v4();
     _businessIdController = TextEditingController(
-      text: widget.client?.businessId ?? _uuid.v4(), // Generate ID if new client
+      text: initialBusinessId,
     );
     _contactPersonController = TextEditingController(
       text: widget.client?.contactPerson ?? '',
@@ -216,16 +218,18 @@ class _AddClientScreenState extends State<AddClientScreen> {
                                 allowMultiple: false,
                               );
 
-                          if (result != null &&
-                              result.files.single.path != null) {
+                          if (result != null && result.files.single.path != null) {
                             setState(() {
-                              _businessLogoController.text =
-                                  result.files.single.path!;
+                              _businessLogoController.text = result.files.single.path!;
                             });
                           } else {
+                            // If no image is selected or selection is cancelled, clear the controller
+                            setState(() {
+                              _businessLogoController.text = '';
+                            });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('No image selected.'),
+                                content: Text('No image selected or selection cancelled.'),
                               ),
                             );
                           }
