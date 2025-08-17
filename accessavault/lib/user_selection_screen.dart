@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:accessavault/main.dart'; // Import main.dart for UserProvider
+import 'package:accessavault/user_provider.dart'; // Import UserProvider
 
 class UserSelectionScreen extends StatefulWidget {
   final List<String> initialSelectedUsers;

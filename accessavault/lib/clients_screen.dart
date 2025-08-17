@@ -93,46 +93,62 @@ class _ClientsScreenState extends State<ClientsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: <Widget>[
-            DataTable(
-              columns: const [
-                DataColumn(label: Text('Client ID')),
-                DataColumn(label: Text('Contact Person')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Website')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Actions')), // New column for actions
-              ],
-              rows:
-                  clients.map((client) {
-                    return DataRow(
-                      cells: <DataCell>[
-                        DataCell(Text(client.id)),
-                        DataCell(Text(client.contactPerson)),
-                        DataCell(Text(client.email)),
-                        DataCell(Text(client.website)),
-                        DataCell(Text(client.status)),
-                        DataCell(
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _editClient(client),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed:
-                                    () => _deleteClient(client, clientProvider),
-                              ),
-                            ],
-                          ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: const [
+              DataColumn(label: Text('Business ID')),
+              DataColumn(label: Text('Business Name')),
+              DataColumn(label: Text('Business User Name')),
+              DataColumn(label: Text('Business Logo')),
+              DataColumn(label: Text('About Business')),
+              DataColumn(label: Text('Status')),
+              DataColumn(label: Text('Actions')),
+            ],
+            rows: clients.map((client) {
+              return DataRow(
+                cells: <DataCell>[
+                  DataCell(Text(client.businessId)),
+                  DataCell(Text(client.businessName)),
+                  DataCell(Text(client.businessUserName)),
+                  DataCell(
+                    ClipOval(
+                      child: Image.asset(
+                        'asset/image/logo.png', // Assuming a default logo for now
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  DataCell(Text(client.aboutBusiness)),
+                  DataCell(
+                    Text(
+                      client.status,
+                      style: TextStyle(
+                        color: client.status == 'Active' ? Colors.green : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  DataCell(
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _editClient(client),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _deleteClient(client, clientProvider),
                         ),
                       ],
-                    );
-                  }).toList(),
-            ),
-          ],
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

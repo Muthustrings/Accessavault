@@ -90,7 +90,7 @@ class _AppsScreenState extends State<AppsScreen> {
                   rows: apps.map((app) {
                     final clientName = clientProvider.clients
                         .firstWhere((client) => client.id == app.clientId,
-                            orElse: () => Client(id: '', name: 'N/A', contactPerson: '', email: '', website: '', status: ''))
+                            orElse: () => Client(id: '', name: 'N/A', contactPerson: '', email: '', website: '', status: '', businessId: '', businessName: 'N/A', businessUserName: '', businessLogoUrl: '', aboutBusiness: ''))
                         .name;
                     return DataRow(
                       cells: [

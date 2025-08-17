@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:accessavault/group_provider.dart';
 import 'package:accessavault/role_provider.dart';
 import 'package:accessavault/client_provider.dart';
-import 'package:accessavault/main.dart'; // For UserProvider
+import 'package:accessavault/user_provider.dart'; // Import UserProvider
 import 'package:multi_select_flutter/multi_select_flutter.dart'; // For multi-select dropdown
 import 'package:file_picker/file_picker.dart'; // For CSV import
 
@@ -41,15 +41,6 @@ class _CreateMultipleGroupsScreenState
     }
   }
 
-  @override
-  void dispose() {
-    for (var group in _groups) {
-      group['name'].dispose();
-      group['description'].dispose();
-    }
-    super.dispose();
-  }
-
   void _addGroup() {
     setState(() {
       _groups.add({
@@ -61,6 +52,15 @@ class _CreateMultipleGroupsScreenState
         'selectedClient': null,
       });
     });
+  }
+
+  @override
+  void dispose() {
+    for (var group in _groups) {
+      group['name'].dispose();
+      group['description'].dispose();
+    }
+    super.dispose();
   }
 
   void _removeGroup(int index) {
@@ -228,6 +228,8 @@ class _CreateMultipleGroupsScreenState
                               decoration: const InputDecoration(
                                 labelText: 'Group Name',
                                 border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -243,6 +245,8 @@ class _CreateMultipleGroupsScreenState
                               decoration: const InputDecoration(
                                 labelText: 'Description',
                                 border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -251,6 +255,8 @@ class _CreateMultipleGroupsScreenState
                               decoration: const InputDecoration(
                                 labelText: 'Role Type',
                                 border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
                               ),
                               items: roles.map((String value) {
                                 return DropdownMenuItem<String>(
@@ -270,6 +276,8 @@ class _CreateMultipleGroupsScreenState
                               decoration: const InputDecoration(
                                 labelText: 'Client',
                                 border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12.0, horizontal: 16.0),
                               ),
                               items: clients.map((client) {
                                 return DropdownMenuItem<String>(
@@ -285,12 +293,15 @@ class _CreateMultipleGroupsScreenState
                             ),
                             const SizedBox(height: 16),
                             MultiSelectDialogField(
-                              items: users.map((user) => MultiSelectItem<String>(user, user)).toList(),
+                              items: users
+                                  .map((user) => MultiSelectItem<String>(user, user))
+                                  .toList(),
                               title: const Text("Select Users"),
                               selectedColor: Colors.blue,
                               decoration: BoxDecoration(
                                 color: Colors.blue.withOpacity(0.1),
-                                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
                                 border: Border.all(
                                   color: Colors.blue,
                                   width: 1.8,
@@ -307,7 +318,8 @@ class _CreateMultipleGroupsScreenState
                                   fontSize: 16,
                                 ),
                               ),
-                              initialValue: _groups[index]['selectedUsers'], // Set initial value for multi-select
+                              initialValue: _groups[index][
+                                  'selectedUsers'], // Set initial value for multi-select
                               onConfirm: (results) {
                                 setState(() {
                                   _groups[index]['selectedUsers'] = results;
@@ -336,6 +348,7 @@ class _CreateMultipleGroupsScreenState
                   label: const Text('Add New Group'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               const SizedBox(height: 8),
@@ -346,27 +359,44 @@ class _CreateMultipleGroupsScreenState
                   label: const Text('Import Groups from CSV'),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ElevatedButton(
-                    onPressed: _createAllGroups,
-                    child: Text(widget.group != null ? 'Save Changes' : 'Create All Groups'),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
+                  OutlinedButton(
                     onPressed: _clearAll,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                    ),
                     child: const Text('Clear All'),
                   ),
-                  const SizedBox(width: 8),
-                  TextButton(
+                  const SizedBox(width: 16),
+                  OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                    ),
                     child: const Text('Back'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _createAllGroups,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0B2447),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                    ),
+                    child: Text(
+                      widget.group != null ? 'Save Changes' : 'Create All Groups',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

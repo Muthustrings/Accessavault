@@ -178,6 +178,8 @@ class _AddRoleScreenState extends State<AddRoleScreen> {
           maxLines: maxLines,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:accessavault/main.dart';
+import 'package:accessavault/user_provider.dart'; // Import UserProvider
 import 'package:accessavault/add_user.dart';
 import 'package:accessavault/client_provider.dart';
+import 'package:accessavault/main.dart'; // For routeObserver
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -169,17 +170,22 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                                             orElse:
                                                 () => Client(
                                                   id: '',
-                                                  name: 'N/A', // Added name
+                                                  name: 'N/A',
                                                   contactPerson: 'N/A',
                                                   email: '',
                                                   website: '',
                                                   status: '',
+                                                  businessId: '',
+                                                  businessName: 'N/A',
+                                                  businessUserName: '',
+                                                  businessLogoUrl: '',
+                                                  aboutBusiness: '',
                                                 ),
                                           );
-                                      return Text(client.name); // Display client name instead of contact person
+                                      return Text(client.name);
                                     },
                                   ),
-                                ), // Added Client column
+                                ),
                                 DataCell(
                                   Row(
                                     children: [
@@ -207,7 +213,7 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                                         onPressed: () {
                                           context
                                               .read<UserProvider>()
-                                              .removeUser(user);
+                                              .deleteUser(users.indexOf(user));
                                         },
                                       ),
                                     ],

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'main.dart';
 import 'client_provider.dart'; // Import Client and ClientProvider
 import 'role_provider.dart'; // Import RoleProvider
+import 'user_provider.dart'; // Import UserProvider
 
 class AddUserPage extends StatefulWidget {
   final Map<String, String>? user;
@@ -228,6 +229,8 @@ class _AddUserPageState extends State<AddUserPage> {
           onSaved: onSaved,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -254,6 +257,8 @@ class _AddUserPageState extends State<AddUserPage> {
           onChanged: onChanged,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],
@@ -283,6 +288,8 @@ class _AddUserPageState extends State<AddUserPage> {
           onChanged: onChanged,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           ),
         ),
       ],

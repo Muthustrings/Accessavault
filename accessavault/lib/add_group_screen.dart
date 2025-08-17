@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:accessavault/group_provider.dart';
 import 'package:accessavault/role_provider.dart';
-import 'package:accessavault/main.dart'; // For UserProvider
+import 'package:accessavault/user_provider.dart'; // For UserProvider
 import 'package:accessavault/single_group_screen.dart'; // Navigate to this screen
 
 class AddGroupScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:accessavault/main.dart'; // For UserProvider
+import 'package:accessavault/user_provider.dart'; // For UserProvider
 import 'package:accessavault/client_provider.dart'; // For ClientProvider
 import 'package:accessavault/role_provider.dart'; // For RoleProvider
 import 'package:accessavault/group_provider.dart'; // For GroupProvider

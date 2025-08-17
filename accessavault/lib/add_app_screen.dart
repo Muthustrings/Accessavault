@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart'; // Import Provider package
 import 'package:accessavault/apps_screen.dart'; // Import AppsScreen
 import 'package:accessavault/group_provider.dart'; // Import GroupProvider
-import 'package:accessavault/main.dart'; // Import UserProvider from main.dart
+import 'package:accessavault/user_provider.dart'; // Import UserProvider
 import 'package:desktop_drop/desktop_drop.dart'; // Import desktop_drop
 
 
@@ -73,7 +73,7 @@ class _AddAppScreenState extends State<AddAppScreen> {
       final clientProvider = Provider.of<ClientProvider>(context, listen: false);
       final selectedClientObject = clientProvider.clients.firstWhere(
         (client) => client.name == _selectedClient,
-        orElse: () => Client(id: '', name: '', contactPerson: '', email: '', website: '', status: ''), // Fallback
+        orElse: () => Client(id: '', name: '', contactPerson: '', email: '', website: '', status: '', businessId: '', businessName: '', businessUserName: '', businessLogoUrl: '', aboutBusiness: ''), // Fallback
       );
 
       final newApp = App(
@@ -142,6 +142,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'App Name',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -158,6 +160,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'App ID',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -173,6 +177,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Client',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   value: _selectedClient,
                   items: clients.map((client) {
@@ -246,6 +252,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Description',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   maxLines: 3,
                   validator: (value) {
@@ -300,6 +308,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Redirect URL',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -315,6 +325,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Assigned Groups',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   value: _selectedGroups.isNotEmpty ? _selectedGroups.first : null,
                   items: groups.map((group) {
@@ -352,6 +364,8 @@ class _AddAppScreenState extends State<AddAppScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Assigned Users',
                     border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
                   ),
                   value: _selectedUsers.isNotEmpty ? _selectedUsers.first : null,
                   items: users.map((user) {
@@ -386,36 +400,30 @@ class _AddAppScreenState extends State<AddAppScreen> {
 
                 // Buttons
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 3, 42, 100),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 15,
-                        ),
-                        textStyle: const TextStyle(fontSize: 18),
-                      ),
-                      onPressed: _createApplication,
-                      child: const Text(
-                        'Create Application',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 15,
-                        ),
-                        textStyle: const TextStyle(fontSize: 18),
-                        side: BorderSide(color: Colors.grey.shade400),
+                            horizontal: 32, vertical: 16),
                       ),
                       onPressed: () {
                         Navigator.pop(context);
                       },
                       child: const Text('Cancel'),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0B2447),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                      ),
+                      onPressed: _createApplication,
+                      child: Text(
+                        widget.app == null ? 'Add Application' : 'Update Application',
+                        style: const TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
