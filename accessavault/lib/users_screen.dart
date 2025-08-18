@@ -46,7 +46,7 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
         title: const Text(
-          'Users',
+          'Employees',
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
                 ),
               ),
               child: const Text(
-                '+ Add User',
+                '+ Add Employee',
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),

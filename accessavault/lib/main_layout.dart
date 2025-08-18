@@ -57,7 +57,7 @@ class _MainLayoutState extends State<MainLayout> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_outline),
-                  label: 'Users',
+                  label: 'Employees',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.account_tree_outlined),
@@ -139,7 +139,7 @@ class _MainLayoutState extends State<MainLayout> {
           ),
           _SidebarItem(
             icon: Icons.person_outline,
-            label: 'Users',
+            label: 'Employees',
             selected: _selectedIndex == 1,
             onTap: () => _onItemTapped(1),
             isExpanded: width > 200,
