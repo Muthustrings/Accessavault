@@ -3,6 +3,11 @@ import 'package:provider/provider.dart';
 import 'dart:io'; // Import dart:io for File
 import 'add_client_screen.dart';
 import 'client_provider.dart'; // Import the new ClientProvider
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 
 class ClientsScreen extends StatefulWidget {
   const ClientsScreen({Key? key}) : super(key: key);
@@ -101,7 +106,44 @@ class _ClientsScreenState extends State<ClientsScreen> {
         ),
         title: const Text(''), // Empty title as "Clients" is now in leading
         actions: <Widget>[
-          // The Spacer() is no longer needed here as the leading widget handles the left alignment
+          ElevatedButton.icon(
+            onPressed: () => _generatePdf(clientProvider.clients),
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+            label: const Text(
+              'Download PDF',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[700],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton.icon(
+            onPressed: () => _generateExcel(clientProvider.clients),
+            icon: const Icon(Icons.table_chart, color: Colors.white),
+            label: const Text(
+              'Download Excel',
+              style: TextStyle(color: Colors.white, fontSize: 14),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green[700],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
           TextButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(
@@ -195,5 +237,60 @@ class _ClientsScreenState extends State<ClientsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _generatePdf(List<Client> clients) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Clients List', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['Business ID', 'Business Name', 'Business User Name', 'Status'],
+                data: clients.map((client) => [
+                  client.businessId,
+                  client.businessName,
+                  client.businessUserName,
+                  client.status,
+                ]).toList(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/clients_list.pdf');
+    await file.writeAsBytes(await pdf.save());
+    OpenFilex.open(file.path);
+  }
+
+  Future<void> _generateExcel(List<Client> clients) async {
+    final excel = Excel.createExcel();
+    final sheet = excel.sheets[excel.getDefaultSheet()]!;
+
+    // Add headers
+    sheet.appendRow(['Business ID', 'Business Name', 'Business User Name', 'Status']);
+
+    // Add data
+    for (var client in clients) {
+      sheet.appendRow([
+        client.businessId,
+        client.businessName,
+        client.businessUserName,
+        client.status,
+      ]);
+    }
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/clients_list.xlsx');
+    await file.writeAsBytes(excel.encode()!);
+    OpenFilex.open(file.path);
   }
 }

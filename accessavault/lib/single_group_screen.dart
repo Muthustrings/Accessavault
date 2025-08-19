@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:accessavault/add_group_screen.dart';
 import 'package:accessavault/group_provider.dart'; // Import GroupProvider
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
+import 'dart:io';
 
 class SingleGroupScreen extends StatefulWidget {
   const SingleGroupScreen({super.key});
@@ -73,22 +79,71 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddGroupScreen(),
+            child: Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _generatePdf(groupProvider.groups),
+                  icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+                  label: const Text(
+                    'Download PDF',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0B2447),
-              ),
-              child: const Text(
-                '+ Add Group',
-                style: TextStyle(color: Colors.white),
-              ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[700],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: () => _generateExcel(groupProvider.groups),
+                  icon: const Icon(Icons.table_chart, color: Colors.white),
+                  label: const Text(
+                    'Download Excel',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddGroupScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0B2447),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    '+ Add Group',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -182,5 +237,58 @@ class _SingleGroupScreenState extends State<SingleGroupScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _generatePdf(List<Group> groups) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Groups List', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['Group Name', 'Description', 'Users'],
+                data: groups.map((group) => [
+                  group.name,
+                  group.description,
+                  group.users.join(', '),
+                ]).toList(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/groups_list.pdf');
+    await file.writeAsBytes(await pdf.save());
+    OpenFilex.open(file.path);
+  }
+
+  Future<void> _generateExcel(List<Group> groups) async {
+    final excel = Excel.createExcel();
+    final sheet = excel.sheets[excel.getDefaultSheet()]!;
+
+    // Add headers
+    sheet.appendRow(['Group Name', 'Description', 'Users']);
+
+    // Add data
+    for (var group in groups) {
+      sheet.appendRow([
+        group.name,
+        group.description,
+        group.users.join(', '),
+      ]);
+    }
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/groups_list.xlsx');
+    await file.writeAsBytes(excel.encode()!);
+    OpenFilex.open(file.path);
   }
 }

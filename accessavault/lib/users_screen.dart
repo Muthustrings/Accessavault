@@ -4,6 +4,12 @@ import 'package:accessavault/user_provider.dart'; // Import UserProvider
 import 'package:accessavault/add_user.dart';
 import 'package:accessavault/client_provider.dart';
 import 'package:accessavault/main.dart'; // For routeObserver
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
+import 'dart:io';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -56,28 +62,70 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AddUserPage()),
-                );
-                context.read<UserProvider>().loadUsers();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0B2447),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 14,
+            child: Row(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _generatePdf(context.read<UserProvider>().users),
+                  icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+                  label: const Text(
+                    'Download PDF',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[700],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: () => _generateExcel(context.read<UserProvider>().users),
+                  icon: const Icon(Icons.table_chart, color: Colors.white),
+                  label: const Text(
+                    'Download Excel',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
                 ),
-              ),
-              child: const Text(
-                '+ Add Employee',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddUserPage()),
+                    );
+                    context.read<UserProvider>().loadUsers();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0B2447),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    '+ Add Employee',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -231,5 +279,60 @@ class _UsersScreenState extends State<UsersScreen> with RouteAware {
         ),
       ),
     );
+  }
+
+  Future<void> _generatePdf(List<Map<String, dynamic>> users) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Users List', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                headers: ['Name', 'Role', 'Status', 'Client'],
+                data: users.map((user) => [
+                  user['name'] ?? '',
+                  user['role'] ?? '',
+                  user['status'] ?? '',
+                  user['client_id'] ?? '', // This will show client ID, not name
+                ]).toList(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/users_list.pdf');
+    await file.writeAsBytes(await pdf.save());
+    OpenFilex.open(file.path);
+  }
+
+  Future<void> _generateExcel(List<Map<String, dynamic>> users) async {
+    final excel = Excel.createExcel();
+    final sheet = excel.sheets[excel.getDefaultSheet()]!;
+
+    // Add headers
+    sheet.appendRow(['Name', 'Role', 'Status', 'Client']);
+
+    // Add data
+    for (var user in users) {
+      sheet.appendRow([
+        user['name'] ?? '',
+        user['role'] ?? '',
+        user['status'] ?? '',
+        user['client_id'] ?? '', // This will show client ID, not name
+      ]);
+    }
+
+    final output = await getTemporaryDirectory();
+    final file = File('${output.path}/users_list.xlsx');
+    await file.writeAsBytes(excel.encode()!);
+    OpenFilex.open(file.path);
   }
 }
